@@ -6,9 +6,13 @@ const generateTarget = () => {
   return Math.floor(Math.random() * 10);
 }
 
+const getAbsoluteDistance = (num1, num2) => {
+  return Math.abs(num1 - num2);
+}
+
 const compareGuesses = (playerGuess, compGuess, targetNum) => {
-  const playerDiff = Math.abs(targetNum - playerGuess);
-  const compDiff = Math.abs(targetNum - compGuess);
+  const playerDiff = getAbsoluteDistance(targetNum, playerGuess);
+  const compDiff = getAbsoluteDistance(targetNum, compGuess);
 
   if (playerGuess === compGuess || playerDiff < compDiff) {
     return true;
