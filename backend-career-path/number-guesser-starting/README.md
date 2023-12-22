@@ -12,7 +12,7 @@ In this project, you’ll write four functions in script.js. We’ve provided so
 
 The purpose of this function is to be called at the start of each new round in order to generate the new secret target number.
 
-- [ ] 2. Create a compareGuesses() function. This function:
+- [x] 2. Create a compareGuesses() function. This function:
   - Has three parameters representing the user (human) guess, a computer guess, and the secret target number to be guessed.
   - Determines which player (human or computer) wins based on which guess is closest to the target. If both players are tied, the human user should win.
   - Return true if the human player wins, and false if the computer player wins.
