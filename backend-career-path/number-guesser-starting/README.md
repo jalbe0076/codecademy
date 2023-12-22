@@ -27,7 +27,7 @@ The purpose of this function is to be called each round to determine which guess
 
 The purpose of this function is to be used to correctly increase the winner’s score after each round.
 
-- [ ] 4. Create an advanceRound() function. This function should increase the value of currentRoundNumber by 1.
+- [x] 4. Create an advanceRound() function. This function should increase the value of currentRoundNumber by 1.
 
 The purpose of this function is to be used to update the round number after each round.
 
