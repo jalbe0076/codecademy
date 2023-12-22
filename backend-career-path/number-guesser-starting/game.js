@@ -89,9 +89,11 @@ const handleValueChange = value => {
     addButton.removeAttribute('disabled');
   } else if (value >= 9) {
     addButton.setAttribute('disabled', true);
+    if (value > 9) alert('Number is out of range');
   } else if (value <= 0) {
     subtractButton.setAttribute('disabled', true);
-  }
+    if (value < 0) alert('Number is out of range');
+  } 
 }
 
 humanGuessInput.addEventListener('input', function(e) {
