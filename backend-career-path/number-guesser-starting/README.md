@@ -8,7 +8,7 @@ In this project, you’ll write four functions in script.js. We’ve provided so
 
 ## Tasks
 
-- [ ] 1. Create a generateTarget() function. This function should return a random integer between 0 and 9.
+- [x] 1. Create a generateTarget() function. This function should return a random integer between 0 and 9.
 
 The purpose of this function is to be called at the start of each new round in order to generate the new secret target number.
 
