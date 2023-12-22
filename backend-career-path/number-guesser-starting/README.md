@@ -20,7 +20,7 @@ The purpose of this function is to be called at the start of each new round in o
 The purpose of this function is to be called each round to determine which guess is closest to the target number.
 
 
-- [ ] 3. Create an updateScore() function. This function:
+- [x] 3. Create an updateScore() function. This function:
   - Has a single parameter. This parameter will be a string value representing the winner.
   - Increases the score variable (humanScore or computerScore) by 1 depending on the winner passed in to updateScore. The string passed in will be either 'human' or 'computer'.
   - Does not need to return any value.
