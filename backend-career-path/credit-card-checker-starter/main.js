@@ -25,6 +25,30 @@ const batch = [valid1, valid2, valid3, valid4, valid5, invalid1, invalid2, inval
 
 // Add your functions below:
 
+const validateCred = (cardNums) => {
+  let count = 0;
+  let confirmMultiplier = 0;
+
+  for (let i = cardNums.length - 1; i >= 0; i--) {
+    
+    if (confirmMultiplier) {
+      let sumDigit = cardNums[i] * 2;
+      sumDigit > 9 ? count = count + (sumDigit - 9) : count = count + sumDigit
+      confirmMultiplier = 0;
+    } else {
+      count += cardNums[i];
+      confirmMultiplier = 1;
+    }
+  }
+
+  return count%10 === 0 ? true : false;
+}
+
+console.log(validateCred(mystery1))
+console.log(validateCred(mystery2))
+console.log(validateCred(mystery3))
+console.log(validateCred(mystery4))
+console.log(validateCred(mystery5))
 
 
 
