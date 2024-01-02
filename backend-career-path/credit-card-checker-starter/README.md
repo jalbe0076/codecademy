@@ -11,7 +11,7 @@ As you progress through the steps, use the terminal and console.log() statements
 
   You’ll use these arrays later to check if your functions are working properly.
 
-- [ ] 2. Create a function, *validateCred()* that has a parameter of an array. The purpose of *validateCred()* is to return *true* when an array contains digits of a valid credit card number and *false* when it is invalid. This function should NOT mutate the values of the original array.
+- [x] 2. Create a function, *validateCred()* that has a parameter of an array. The purpose of *validateCred()* is to return *true* when an array contains digits of a valid credit card number and *false* when it is invalid. This function should NOT mutate the values of the original array.
 
   To find out if a credit card number is valid or not, use the Luhn algorithm. Generally speaking, an algorithm is a series of steps that solve a problem — the Luhn algorithm is a series of mathematical calculations used to validate certain identification numbers, e.g. credit card numbers. The calculations in the Luhn algorithm can be broken down as the following steps:
 
@@ -22,7 +22,7 @@ As you progress through the steps, use the terminal and console.log() statements
   
   Here’s a visual that outlines the steps. Check your function using both the provided valid and invalid numbers.
 
-- [ ] 4. Create another function, *findInvalidCards()* that has one parameter for a nested array of credit card numbers. The role of *findInvalidCards()* is to check through the nested array for which numbers are invalid, and return another nested array of invalid cards.
+- [x] 4. Create another function, *findInvalidCards()* that has one parameter for a nested array of credit card numbers. The role of *findInvalidCards()* is to check through the nested array for which numbers are invalid, and return another nested array of invalid cards.
 
 - [ ] 5. After finding all the invalid credit card numbers, it’s also necessary to identify the credit card companies that have possibly issued these faulty numbers. Create a function, *idInvalidCardCompanies()* that has one parameter for a nested array of invalid numbers and returns an array of companies.
 

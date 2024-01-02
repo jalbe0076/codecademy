@@ -30,10 +30,10 @@ const validateCred = (cardNums) => {
   let confirmMultiplier = 0;
 
   for (let i = cardNums.length - 1; i >= 0; i--) {
-    
+
     if (confirmMultiplier) {
       let sumDigit = cardNums[i] * 2;
-      sumDigit > 9 ? count = count + (sumDigit - 9) : count = count + sumDigit
+      sumDigit > 9 ? count += (sumDigit - 9) : count += sumDigit
       confirmMultiplier = 0;
     } else {
       count += cardNums[i];
@@ -44,6 +44,21 @@ const validateCred = (cardNums) => {
   return count%10 === 0 ? true : false;
 }
 
+const findInvalidCards = (cards) => {
+  return cards.map(card => validateCred(card));
+}
+
+console.log(findInvalidCards(batch))
+console.log(validateCred(valid1))
+console.log(validateCred(valid2))
+console.log(validateCred(valid3))
+console.log(validateCred(valid4))
+console.log(validateCred(valid5))
+console.log(validateCred(invalid1))
+console.log(validateCred(invalid2))
+console.log(validateCred(invalid3))
+console.log(validateCred(invalid4))
+console.log(validateCred(invalid5))
 console.log(validateCred(mystery1))
 console.log(validateCred(mystery2))
 console.log(validateCred(mystery3))
