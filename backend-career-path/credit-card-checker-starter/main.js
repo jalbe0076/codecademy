@@ -47,20 +47,47 @@ const validateCred = (cardNums) => {
 const findInvalidCards = (cards) => {
   return cards.reduce((acc, card) => {
     const validatedCard = validateCred(card);
+    !validatedCard && acc.push(card);
 
-    if(!validatedCard) {
-      acc.push(validatedCard);
-    }
-    
     return acc;
   }, []);
 }
 
 const idInvalidCardCompanies = (invalidCards) => {
+  const companies = [];
+  const memo = {};
 
+  invalidCards.forEach(card => {
+    let cardCompany = '';
+
+    switch(card[0]) {
+      case 3:
+        cardCompany = 'Amex';
+        break;
+      case 4:
+        cardCompany = 'Visa';
+        break;
+      case 5:
+        cardCompany = 'Mastercard';
+        break;
+      case 6:
+        cardCompany = 'Discover';
+        break;
+      default:
+        cardCompany = 'Company not found'
+        break;
+    }
+
+    if (cardCompany in memo === false) {
+      companies.push(cardCompany)
+      memo[cardCompany] = card[0];
+    }
+  });
+
+  return companies;
 }
 
-console.log(findInvalidCards(batch))
+console.log(idInvalidCardCompanies(findInvalidCards(batch)))
 console.log(validateCred(valid1))
 console.log(validateCred(valid2))
 console.log(validateCred(valid3))
