@@ -45,7 +45,19 @@ const validateCred = (cardNums) => {
 }
 
 const findInvalidCards = (cards) => {
-  return cards.map(card => validateCred(card));
+  return cards.reduce((acc, card) => {
+    const validatedCard = validateCred(card);
+
+    if(!validatedCard) {
+      acc.push(validatedCard);
+    }
+    
+    return acc;
+  }, []);
+}
+
+const idInvalidCardCompanies = (invalidCards) => {
+
 }
 
 console.log(findInvalidCards(batch))
