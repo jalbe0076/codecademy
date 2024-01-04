@@ -15,7 +15,7 @@ As you progress through the steps, use the terminal and console.log() statements
 
   You’ll use these helper functions later to create your objects that represent P. aequor.
 
-- [ ]  2. Since you need to create multiple objects, create a factory function *pAequorFactory()* that has two parameters:
+- [x]  2. Since you need to create multiple objects, create a factory function *pAequorFactory()* that has two parameters:
 
   - The first parameter is a number (no two organisms should have the same number).
   - The second parameter is an array of 15 DNA bases.
