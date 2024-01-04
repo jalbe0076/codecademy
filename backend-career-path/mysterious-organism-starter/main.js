@@ -35,6 +35,14 @@ const pAequorFactory = (num, dnaStrand) => {
 
         console.log(`specimen #${this.specimenNum} and specimen #${altPAequor.specimenNum} have ${percentageInCommon}% DNA in common.`);
       }
+    },
+    willLikelySurvive() {
+      const numOfBases = this.dna.reduce((acc, base) => {
+        return base === 'C' || base === 'G' ? acc + 1 : acc;
+      }, 0)
+      const survivalPercent = numOfBases / this.dna.length * 100;
+      console.log(survivalPercent)
+      return survivalPercent >= 60 ? true : false;
     }
   };
 }
@@ -43,8 +51,11 @@ const specimen1 = pAequorFactory(4, mockUpStrand())
 const specimen2 = pAequorFactory(45, mockUpStrand())
 
 console.log(specimen1)
-console.log(specimen2)
-console.log(specimen1.compareDNA(specimen2))
+// specimen1.mutate();
+console.log('survive: ', specimen1.willLikelySurvive())
+// console.log(specimen1)
+// console.log(specimen2)
+// console.log(specimen1.compareDNA(specimen2))
 
 
 
