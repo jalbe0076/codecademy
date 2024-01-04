@@ -34,6 +34,7 @@ const pAequorFactory = (num, dnaStrand) => {
         const percentageInCommon = (count / 15 * 100).toFixed(2);
 
         console.log(`specimen #${this.specimenNum} and specimen #${altPAequor.specimenNum} have ${percentageInCommon}% DNA in common.`);
+        return percentageInCommon;
       }
     },
     willLikelySurvive() {
@@ -68,6 +69,25 @@ const pAequorFactory = (num, dnaStrand) => {
   };
 }
 
+const findRelatedInstances = (instance) => {
+  let highestPercent = 0;
+  let mostRelatedPair = [];
+
+  for (let i = 0; i < instance.length; i++) {
+    for (let j = i + 1; j < instance.length; j++) {
+      const currentPercent = instance[i].compareDNA(instance[j]);
+  
+      if (highestPercent < currentPercent) {
+        highestPercent = currentPercent;
+        mostRelatedPair = [instance[i], instance[j]]
+      }
+    }
+  }
+
+  console.log(`The two most related instances are specimen #${mostRelatedPair[0].specimenNum} and specimen #${mostRelatedPair[1].specimenNum} with ${highestPercent}% DNA in common.`)
+  return mostRelatedPair;
+}
+
 const pAequorInstances = [];
 
 // Create 30 instances of pAequor that are likelly to survive
@@ -81,20 +101,5 @@ for (let i = 1; i <= 30; i++) {
   pAequorInstances.push(pAequorFactory(i, newStrand));
 }
 
-// console.log(pAequorInstances);
-
-const specimen31 = pAequorFactory(4, mockUpStrand())
-// const specimen32 = pAequorFactory(45, mockUpStrand())
-
-
-
-console.log(specimen31)
-console.log('complement strand', specimen31.complementStrand())
-// console.log(specimen32)
-// console.log(specimen31.compareDNA(specimen32))
-
-
-
-
-
-
+console.log(pAequorInstances);
+console.log(findRelatedInstances(pAequorInstances))
