@@ -43,6 +43,27 @@ const pAequorFactory = (num, dnaStrand) => {
       const survivalPercent = numOfBases / this.dna.length * 100;
 
       return survivalPercent >= 60 ? true : false;
+    },
+    complementStrand() {
+      return this.dna.reduce((acc, base) => {
+        switch (base) {
+          case 'G': 
+            base = 'C';
+            break;
+          case 'C': 
+            base = 'G';
+            break;
+          case 'T': 
+            base = 'A';
+            break;
+          case 'A': 
+            base = 'T';
+            break;
+        }
+        acc.push(base);
+
+        return acc;
+      }, [])
     }
   };
 }
@@ -60,12 +81,15 @@ for (let i = 1; i <= 30; i++) {
   pAequorInstances.push(pAequorFactory(i, newStrand));
 }
 
-console.log(pAequorInstances);
+// console.log(pAequorInstances);
 
-// const specimen31 = pAequorFactory(4, mockUpStrand())
+const specimen31 = pAequorFactory(4, mockUpStrand())
 // const specimen32 = pAequorFactory(45, mockUpStrand())
 
-// console.log(specimen31)
+
+
+console.log(specimen31)
+console.log('complement strand', specimen31.complementStrand())
 // console.log(specimen32)
 // console.log(specimen31.compareDNA(specimen32))
 
