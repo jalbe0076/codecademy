@@ -41,21 +41,33 @@ const pAequorFactory = (num, dnaStrand) => {
         return base === 'C' || base === 'G' ? acc + 1 : acc;
       }, 0)
       const survivalPercent = numOfBases / this.dna.length * 100;
-      console.log(survivalPercent)
+
       return survivalPercent >= 60 ? true : false;
     }
   };
 }
 
-const specimen1 = pAequorFactory(4, mockUpStrand())
-const specimen2 = pAequorFactory(45, mockUpStrand())
+const pAequorInstances = [];
 
-console.log(specimen1)
-// specimen1.mutate();
-console.log('survive: ', specimen1.willLikelySurvive())
-// console.log(specimen1)
-// console.log(specimen2)
-// console.log(specimen1.compareDNA(specimen2))
+// Create 30 instances of pAequor that are likelly to survive
+for (let i = 1; i <= 30; i++) {
+  let newStrand = mockUpStrand();
+
+  while (!pAequorFactory(i, newStrand).willLikelySurvive()) {
+    newStrand = mockUpStrand();
+  }
+  
+  pAequorInstances.push(pAequorFactory(i, newStrand));
+}
+
+console.log(pAequorInstances);
+
+// const specimen31 = pAequorFactory(4, mockUpStrand())
+// const specimen32 = pAequorFactory(45, mockUpStrand())
+
+// console.log(specimen31)
+// console.log(specimen32)
+// console.log(specimen31.compareDNA(specimen32))
 
 
 

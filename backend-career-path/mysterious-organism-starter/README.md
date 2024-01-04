@@ -47,13 +47,13 @@ As you progress through the steps, use the terminal and console.log() statements
 
   ex1 and ex2 only have the 3rd element in common ('T') and therefore, have 25% (1/4) of their DNA in common. The resulting message would read something along the lines of: specimen #1 and specimen #2 have 25% DNA in common.
 
-- [ ]  5. P. aequor have a likelier chance of survival if their DNA is made up of at least 60% 'C' or 'G' bases.
+- [x]  5. P. aequor have a likelier chance of survival if their DNA is made up of at least 60% 'C' or 'G' bases.
 
   In the returned object of *pAequorFactory()*, add another method *.willLikelySurvive()*.
 
   *.*willLikelySurvive()* returns true if the object’s .dna array contains at least 60% 'C' or 'G' bases. Otherwise, *.willLikelySurvive()* returns false.
 
-- [ ]  6. With the factory function set up, your team requests that you create 30 instances of pAequor that can survive in their natural environment. Store these instances in an array for your team to study later.
+- [x]  6. With the factory function set up, your team requests that you create 30 instances of pAequor that can survive in their natural environment. Store these instances in an array for your team to study later.
 
 - [ ]  7. If you’d like to challenge yourself further, you could consider the following:
 
