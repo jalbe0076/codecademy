@@ -24,7 +24,7 @@ As you progress through the steps, use the terminal and console.log() statements
 
   You’ll also add more methods to this returned object in the later steps.
 
-- [ ]  3. Your team wants you to simulate P. aequor‘s high rate of mutation (change in its DNA).
+- [x]  3. Your team wants you to simulate P. aequor‘s high rate of mutation (change in its DNA).
 
   To simulate a mutation, in *pAequorFactory()*‘s returned object, add the method .*mutate()*.
 
@@ -32,7 +32,7 @@ As you progress through the steps, use the terminal and console.log() statements
 
   For example, if the randomly selected base is the 1st base and it is 'A', the base must be changed to 'T', 'C', or 'G'. But it cannot be 'A' again.
 
-- [ ]  4. Your research team wants to be able to compare the DNA sequences of different P. aequor. You’ll have to add a new method (*.compareDNA()*) to the returned object of the factory function.
+- [x]  4. Your research team wants to be able to compare the DNA sequences of different P. aequor. You’ll have to add a new method (*.compareDNA()*) to the returned object of the factory function.
 
   *.compareDNA()* has one parameter, another pAequor object.
 
