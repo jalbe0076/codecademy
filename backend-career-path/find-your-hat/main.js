@@ -1,3 +1,5 @@
+require('fs')
+
 const prompt = require('prompt-sync')({sigint: true});
 
 const hat = '^';
@@ -24,4 +26,11 @@ const myField = new Field([
   ['░', '^', '░'],
 ]);
 
+process.stdout.write(`You(*) need to find your hat(^)!!!
+Make sure not to fall in a hole(O). 
+'r' moves right
+'u' moves up
+'d' moves down
+'l' moves left
+Where do you want to move?\n`)
 myField.print();
