@@ -20,6 +20,10 @@ class Field {
     while(playing) {
       this.print();
       this.inputDirection();
+      if(this.isHole()) {
+        console.log('You fell in a hole!')
+        playing = false;
+      }
       this.field[this.locationY][this.locationX] = pathCharacter;
     }
   }
@@ -45,6 +49,10 @@ class Field {
         this.inputDirection();
         break;
     }
+  }
+
+  isHole() {
+    return this.field[this.locationY][this.locationX] === hole;
   }
 
   gameRules() {
