@@ -20,12 +20,23 @@ class Field {
     while(playing) {
       this.print();
       this.inputDirection();
-      if(this.isHole()) {
+
+      if(this.outOfBounds()) {
+        console.log(`You're out of bounds!`)
+        playing = false;
+        break;
+      } else if(this.isHole()) {
         console.log('You fell in a hole!')
         playing = false;
-      }
+        break;
+      } 
+
       this.field[this.locationY][this.locationX] = pathCharacter;
     }
+  }
+
+  gameRules() {
+    process.stdout.write("You(*) need to find your hat(^)!!! \nMake sure not to fall in a hole(O) and to stay on the field(░). \n'r' moves right  \n'u' moves up  \n'd' moves down  \n'l' moves left \n\nGAME FIELD:\n")
   }
 
   inputDirection() {
@@ -55,8 +66,8 @@ class Field {
     return this.field[this.locationY][this.locationX] === hole;
   }
 
-  gameRules() {
-    process.stdout.write("You(*) need to find your hat(^)!!! \nMake sure not to fall in a hole(O) and to stay on the field(░). \n'r' moves right  \n'u' moves up  \n'd' moves down  \n'l' moves left \n\nGAME FIELD:\n")
+  outOfBounds() {
+    return this.locationY < 0 || this.locationY >= this.field.length || this.locationX < 0 || this.locationX >= this.field[0].length;
   }
 
   print() {

@@ -5,7 +5,7 @@ In this project, you’ll be building an interactive terminal game. The scenario
 
 ## Project Requirements
 
-- [ ] 1. Your project is centered on a Field class. This and the following tasks will describe how the class should function at a high level, and it will be up to you to figure out the implementation in code. As you go, test your code by creating instances of the class and calling its methods.
+- [x] 1. Your project is centered on a Field class. This and the following tasks will describe how the class should function at a high level, and it will be up to you to figure out the implementation in code. As you go, test your code by creating instances of the class and calling its methods.
 
   The `Field` constructor should take a two-dimensional array representing the “field” itself. A field consists of a grid containing “holes” (`O`) and one “hat” (`^`). We use a neutral background character (`░`) to indicate the rest of the field itself. The player will begin in the upper-left of the field, and the player’s path is represented by `*`.
   ```
@@ -23,7 +23,7 @@ In this project, you’ll be building an interactive terminal game. The scenario
   ]);
   ```
 
-- [ ] 2. Give your `Field` class a `.print()` method that prints the current state of the field. You can choose to format this however you want, but it will be much easier to play the game if you print out a string representation of the board instead of the raw array.
+- [x] 2. Give your `Field` class a `.print()` method that prints the current state of the field. You can choose to format this however you want, but it will be much easier to play the game if you print out a string representation of the board instead of the raw array.
 
 
 - [ ] 3. Your game should be playable by users. In order to facilitate this, build out the following behavior:
