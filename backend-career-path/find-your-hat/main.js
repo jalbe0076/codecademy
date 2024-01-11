@@ -13,6 +13,7 @@ class Field {
     this.pastLocationX = 0;
     this.pastLocationY = 0;
     this.hardMode = false;
+    this.turnCount = 0;
   }
 
   runGame() {
@@ -21,6 +22,10 @@ class Field {
     this.waitForKeypress();
 
     while(playing) {
+      if(this.hardMode) {
+        this.hardModeLogic()
+        this.turnCount += 1;
+      }
       this.print();
       this.inputDirection();
 
@@ -52,6 +57,22 @@ class Field {
 
   gameRules() {
     process.stdout.write("You(*) need to find your hat(^)!!! \nMake sure not to fall in a hole(O) and to stay on the field(░). \n'r' moves right  \n'u' moves up  \n'd' moves down  \n'l' moves left\n");
+  }
+
+  hardModeLogic() {
+    if(this.turnCount === 3) {
+      const createHole = {
+        x: Math.floor(Math.random() * this.field[0].length),
+        y: Math.floor(Math.random() * this.field.length),
+      }
+      console.log('x: ', createHole)
+      while(this.field[createHole.y][createHole.x] === hat || this.field[createHole.y][createHole.x] === hole || this.field[createHole.y][createHole.x] === pathCharacter) {
+        createHole.x = Math.floor(Math.random() * this.field[0].length);
+        createHole.y = Math.floor(Math.random() * this.field.length);
+      }
+      this.field[createHole.y][createHole.x] = hole;
+      this.turnCount = 0;
+    }
   }
 
   inputDirection() {
@@ -102,11 +123,6 @@ class Field {
     console.log(`Press any key to start game... Type 'hard' to activate hard mode.`);
     const input = prompt();
     this.activateHardMode(input)
-    // return new Promise((res) => {
-    //   process.stdin.once('data', () => {
-    //     res()
-    //   })
-    // });
   }
 
   static generateField(height, width, holes = 0.1) {
@@ -137,6 +153,4 @@ class Field {
 }
 
 const myField = new Field(Field.generateField(10, 10));
-
-
 myField.runGame();
