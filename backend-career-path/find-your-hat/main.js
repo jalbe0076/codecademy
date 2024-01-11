@@ -12,12 +12,13 @@ class Field {
     this.locationY = 0;
     this.pastLocationX = 0;
     this.pastLocationY = 0;
+    this.hardMode = false;
   }
 
-  async runGame() {
+  runGame() {
     let playing = true;
     this.gameRules();
-    await this.waitForKeypress();
+    this.waitForKeypress();
 
     while(playing) {
       this.print();
@@ -39,6 +40,10 @@ class Field {
       this.field[this.locationY][this.locationX] = pathCharacter;
     }
     process.exit();
+  }
+
+  activateHardMode(input) {
+    if(input.trim().toLowerCase() === 'hard') this.hardMode = true;
   }
 
   findHat() {
@@ -85,7 +90,7 @@ class Field {
   print() {
     // clear the terminal using ANSI escape code
     process.stdout.write('\x1Bc')
-    console.log('GAME FIELD:\n')
+    this.hardMode ? console.log('HARD mode activated! \nGAME FIELD:\n') : console.log('GAME FIELD:\n')
 
     const printField = this.field.map(row => {
       return row.join('');
@@ -94,12 +99,14 @@ class Field {
   }
 
   waitForKeypress() {
-    console.log('Press any key to start game...');
-    return new Promise((res) => {
-      process.stdin.once('data', () => {
-        res()
-      })
-    });
+    console.log(`Press any key to start game... Type 'hard' to activate hard mode.`);
+    const input = prompt();
+    this.activateHardMode(input)
+    // return new Promise((res) => {
+    //   process.stdin.once('data', () => {
+    //     res()
+    //   })
+    // });
   }
 
   static generateField(height, width, holes = 0.1) {
