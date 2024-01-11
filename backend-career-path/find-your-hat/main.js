@@ -1,5 +1,3 @@
-require('fs')
-
 const prompt = require('prompt-sync')({sigint: true});
 
 const hat = '^';
@@ -8,7 +6,7 @@ const fieldCharacter = '░';
 const pathCharacter = '*';
 
 class Field {
-  constructor(field) {
+  constructor(field = [[]]) {
     this.field = field;
     this.locationX = 0;
     this.locationY = 0;
@@ -82,13 +80,35 @@ class Field {
     }).join('\n');
     console.log(printField);
   }
+
+  static generateField(height, width, holes = 0.1) {
+    const field = [];
+
+    for(let y = 0; y < height; y++) {
+      field.push([]);
+      for(let x = 0; x < width; x++) {
+        const tileProbability = Math.random();
+        field[y][x] = tileProbability > holes ? fieldCharacter : hole;
+      }
+    }
+
+    field[0][0] = pathCharacter;
+    const hatLocation = {
+      x: Math.floor(Math.random() * width),
+      y: Math.floor(Math.random() * height)
+    }
+
+    while(hatLocation.y === 0 && hatLocation.x === 0) {
+      hatLocation.x = Math.floor(Math.random() * width)
+      hatLocation.y = Math.floor(Math.random() * height)
+    }
+    field[hatLocation.y][hatLocation.x] = hat;
+
+    return field;    
+  }
 }
 
-const myField = new Field([
-  ['*', '░', 'O'],
-  ['░', 'O', '░'],
-  ['░', '^', '░'],
-]);
+const myField = new Field(Field.generateField(10, 10));
 
 
 myField.runGame();

@@ -39,7 +39,7 @@ In this project, you’ll be building an interactive terminal game. The scenario
 
   When any of the above occur, let the user know and end the game.
 
-- [ ] 4. Add a `.generateField()` method to your `Field` class. This doesn’t need to be tied to a particular instance, so make it a static method of the class itself.
+- [x] 4. Add a `.generateField()` method to your `Field` class. This doesn’t need to be tied to a particular instance, so make it a static method of the class itself.
 
   This method should at least take arguments for height and width of the field, and it should return a randomized two-dimensional array representing the field with a hat and one or more holes. In our solution, we added a third `percentage` argument used to determine what percent of the field should be covered in holes.
 
