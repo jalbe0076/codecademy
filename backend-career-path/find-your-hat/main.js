@@ -10,6 +10,8 @@ class Field {
     this.field = field;
     this.locationX = 0;
     this.locationY = 0;
+    this.pastLocationX = 0;
+    this.pastLocationY = 0;
   }
 
   async runGame() {
@@ -33,6 +35,7 @@ class Field {
         playing = false;
       }
 
+      this.field[this.pastLocationY][this.pastLocationX] = fieldCharacter;
       this.field[this.locationY][this.locationX] = pathCharacter;
     }
     process.exit();
@@ -47,6 +50,8 @@ class Field {
   }
 
   inputDirection() {
+    this.pastLocationX = this.locationX;
+    this.pastLocationY = this.locationY;
     const direction = prompt('Which way? ');
 
     switch(direction) {
@@ -81,7 +86,7 @@ class Field {
     // clear the terminal using ANSI escape code
     process.stdout.write('\x1Bc')
     console.log('GAME FIELD:\n')
-    
+
     const printField = this.field.map(row => {
       return row.join('');
     }).join('\n');
