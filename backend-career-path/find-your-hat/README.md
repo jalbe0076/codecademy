@@ -26,7 +26,7 @@ In this project, you’ll be building an interactive terminal game. The scenario
 - [x] 2. Give your `Field` class a `.print()` method that prints the current state of the field. You can choose to format this however you want, but it will be much easier to play the game if you print out a string representation of the board instead of the raw array.
 
 
-- [ ] 3. Your game should be playable by users. In order to facilitate this, build out the following behavior:
+- [x] 3. Your game should be playable by users. In order to facilitate this, build out the following behavior:
 
   - When a user runs main.js, they should be prompted for input and be able to indicate which direction they’d like to “move”.
   - After entering an instruction, the user should see a printed result of their current field map with the tiles they have visited marked with `*`. They should be prompted for their next move.
