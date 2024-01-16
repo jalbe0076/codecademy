@@ -1,10 +1,12 @@
 const express = require('express');
 const app = express();
 
-const { quotes } = require('./data');
-const { getRandomElement } = require('./utils');
-
 const PORT = process.env.PORT || 4001;
+const quoteRoute = require('./modules/quotes.js');
 
 app.use(express.static('public'));
+app.use('/api/quotes', quoteRoute);
 
+app.listen(PORT, () => {
+  console.log(`Listening on PORT: ${PORT}.`)
+});
