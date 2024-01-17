@@ -5,6 +5,7 @@ const fetchByAuthorButton = document.getElementById('fetch-by-author');
 const quoteContainer = document.getElementById('quote-container');
 const quoteText = document.querySelector('.quote');
 const attributionText = document.querySelector('.attribution');
+let updateQuotesBtn;
 
 const resetQuotes = () => {
   quoteContainer.innerHTML = '';
@@ -21,11 +22,60 @@ const renderQuotes = (quotes = []) => {
   if (quotes.length > 0) {
     quotes.forEach(quote => {
       const newQuote = document.createElement('div');
+      const updateButton = document.createElement('button');
       newQuote.className = 'single-quote';
       newQuote.innerHTML = `<div class="quote-text">${quote.quote}</div>
       <div class="attribution">- ${quote.person}</div>`;
+      updateButton.className = `update-btn-${quote.id} update-btns`;
+      updateButton.innerText = 'Update';
       quoteContainer.appendChild(newQuote);
+      newQuote.appendChild(updateButton)
+
+      updateButton.addEventListener('click', (e) => {
+        const quoteContainer = newQuote.querySelector('.quote-text');
+        const authorContainer = newQuote.querySelector('.attribution');
+
+        const newQuoteTextBox = document.createElement('textArea');
+        const newAuthorTextBox = document.createElement('textArea');
+        newQuoteTextBox.value = quoteContainer.innerText;
+        newAuthorTextBox.value = authorContainer.innerText;
+
+        newQuote.replaceChild(newQuoteTextBox, quoteContainer);
+        newQuote.replaceChild(newAuthorTextBox, authorContainer);
+
+        const okButton = document.createElement('button');
+        okButton.innerText = 'OK';
+
+        const cancelButton = document.createElement('button');
+        cancelButton.innerText = 'Cancel';
+
+        okButton.addEventListener('click', () => {
+          quoteContainer.innerText = newQuoteTextBox.value;
+          authorContainer.innerText = newAuthorTextBox.value;
+
+          newQuote.replaceChild(quoteContainer, newQuoteTextBox);
+          newQuote.replaceChild(authorContainer, newAuthorTextBox);
+
+          newQuote.removeChild(okButton);
+          newQuote.removeChild(cancelButton);
+          newQuote.appendChild(updateButton);
+        });
+
+        cancelButton.addEventListener('click', () => {
+          newQuote.replaceChild(quoteContainer, newQuoteTextBox);
+          newQuote.replaceChild(authorContainer, newAuthorTextBox);
+          
+          newQuote.removeChild(okButton);
+          newQuote.removeChild(cancelButton);
+          newQuote.appendChild(updateButton);
+        })
+                
+
+        updateButton.replaceWith(okButton);
+        newQuote.appendChild(cancelButton);
+      })
     });
+
   } else {
     quoteContainer.innerHTML = '<p>Your request returned no quotes.</p>';
   }
@@ -42,6 +92,7 @@ fetchAllButton.addEventListener('click', () => {
   })
   .then(response => {
     renderQuotes(response);
+    
   });
 });
 
@@ -73,3 +124,4 @@ fetchByAuthorButton.addEventListener('click', () => {
     renderQuotes(response);
   });
 });
+
