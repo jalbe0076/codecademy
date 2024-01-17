@@ -41,7 +41,7 @@ fetchAllButton.addEventListener('click', () => {
     }
   })
   .then(response => {
-    renderQuotes(response.quotes);
+    renderQuotes(response);
   });
 });
 
