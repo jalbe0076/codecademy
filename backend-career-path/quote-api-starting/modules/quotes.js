@@ -24,4 +24,17 @@ quoteRoute.get('/random', (req, res, next) => {
   }
 });
 
+quoteRoute.post('/', (req, res, next) => {
+  const newQuote = {
+    quote: req.query.quote,
+    person: req.query.person
+  };
+  if(newQuote.quote && newQuote.person) {
+    quotes.push(newQuote);
+    res.status(201).send(newQuote);
+  } else {
+    res.status(400).send();
+  }
+})
+
 module.exports = quoteRoute;
