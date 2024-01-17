@@ -2,11 +2,17 @@ const express = require('express');
 const app = express();
 
 const { quotes } = require('../data');
-const { getRandomElement } = require('../utils');
+const { getRandomElement, isObjectEmpty } = require('../utils');
 quoteRoute = express.Router();
 
 quoteRoute.get('/', (req, res, next) => {
-  res.send(quotes);
+  const author = req.query;
+  if(isObjectEmpty(author)) {
+    res.send(quotes);
+  } else {
+    const authorQuotes = quotes.filter(quotes => quotes.person.toLowerCase() === author.person.trim().toLowerCase());
+    res.send(authorQuotes);
+  }
 });
 
 quoteRoute.get('/random', (req, res, next) => {

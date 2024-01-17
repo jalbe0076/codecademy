@@ -3,6 +3,11 @@ const getRandomElement = arr => {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+const isObjectEmpty = (objectToCheck) => {
+  return JSON.stringify(objectToCheck) === "{}";
+};
+
 module.exports = {
-  getRandomElement
+  getRandomElement,
+  isObjectEmpty
 };
