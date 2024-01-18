@@ -14,11 +14,11 @@ In server.js, we’ve provided you with some imported helper functions and data:
 
 ## Tasks
 
-- [ ] 1. Set your server to listen on the PORT variable.
+- [x] 1. Set your server to listen on the PORT variable.
 
   Once you start up the server with `node server.js`, navigate to `localhost:4001` in the browser. You’ll know things are up and running when you load the blue Quote API site in the browser.
 
-- [ ] 2. Your API should have a GET `/api/quotes/random` route. This route should send back a random quote from the `quotes` data. The response body should have the following shape:
+- [x] 2. Your API should have a GET `/api/quotes/random` route. This route should send back a random quote from the `quotes` data. The response body should have the following shape:
 
   ```
   {
@@ -26,7 +26,7 @@ In server.js, we’ve provided you with some imported helper functions and data:
   }
   ```
 
-- [ ] 3. Your API should have a GET `/api/quotes` route. This route should return all quotes from the data if the request has no query params.
+- [x] 3. Your API should have a GET `/api/quotes` route. This route should return all quotes from the data if the request has no query params.
 
   If there is a query string with a `person` attribute, the route should return all quotes said by the same person. For instance, the data set has multiple quotes for Grace Hopper, so GET `/api/quotes?person=Grace Hopper` should return an array of only those quotes. If there are no quotes for the requested `person`, send back an empty array.
 
@@ -38,7 +38,7 @@ In server.js, we’ve provided you with some imported helper functions and data:
   }
   ```
 
-- [ ] 4. Your API should have a POST `/api/quotes` route for adding new quotes to the data. New quotes will be passed in a query string with two properties: `quote` with the quote text itself, and person with the `person` who is credited with saying the quote.
+- [x] 4. Your API should have a POST `/api/quotes` route for adding new quotes to the data. New quotes will be passed in a query string with two properties: `quote` with the quote text itself, and person with the `person` who is credited with saying the quote.
 
   This route should verify that both properties exist in the request query string and send a `400` response if it does not. If all is well, this route handler should add the new quote object to the data array and send back a response with the following shape:
 
@@ -50,7 +50,7 @@ In server.js, we’ve provided you with some imported helper functions and data:
 
 - [ ] 5. If you’d like to extend your app, here are some ideas to try, but you can also try out your own:
 
-  - [ ] Add a PUT route for updating quotes in the data. This might require adding some sort of unique ID for each quote in the array in data.js.
+  - [x] Add a PUT route for updating quotes in the data. This might require adding some sort of unique ID for each quote in the array in data.js.
   - [ ] Add a DELETE route for deleting quotes from the data array. As with PUT, this might require adding IDs to the data array and using `req.params`. For both of these ideas, you’ll be able to interact via Postman.
   - [ ] Add other data to the array, such as the year of each quote, and try to display it on the front-end.
   - [ ] Add another resource to your API in addition to quotes, such as biographical blurbs (you’ll need to find your own data for this new resource). Use Express Routers to keep your code simple and separated into different files for each router.

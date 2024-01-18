@@ -8,7 +8,7 @@ quoteRoute = express.Router();
 quoteRoute.get('/', (req, res, next) => {
   const author = req.query;
   if(isObjectEmpty(author)) {
-    console.log(quotes)
+    // console.log(quotes)
     res.send(quotes);
   } else {
     const authorQuotes = quotes.filter(quotes => quotes.person.toLowerCase() === author.person.trim().toLowerCase());
@@ -33,10 +33,22 @@ quoteRoute.post('/', (req, res, next) => {
   };
   if(newQuote.quote && newQuote.person) {
     quotes.push(newQuote);
-    console.log(newQuote)
+    // console.log(newQuote)
     res.status(201).send(newQuote);
   } else {
     res.status(400).send();
+  }
+});
+
+quoteRoute.put('/', (req, res, next) => {
+  const indexOfQuote = quotes.findIndex(quote => quote.id === req.body.id);
+
+  if(indexOfQuote !== -1) {
+    quotes[indexOfQuote].quote = req.body.quote;
+    quotes[indexOfQuote].person = req.body.person;
+    res.status(201).send(quotes[indexOfQuote])
+  } else {
+    res.status(404).send('Quote does not exist')
   }
 })
 
