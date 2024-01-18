@@ -29,7 +29,7 @@ const renderQuotes = (quotes = []) => {
       updateButton.className = `update-btn-${quote.id} update-btns`;
       updateButton.innerText = 'Update';
       quoteContainer.appendChild(newQuote);
-      newQuote.appendChild(updateButton)
+      newQuote.appendChild(updateButton);
 
       updateButton.addEventListener('click', (e) => {
         const quoteContainer = newQuote.querySelector('.quote-text');
@@ -59,23 +59,29 @@ const renderQuotes = (quotes = []) => {
           newQuote.removeChild(okButton);
           newQuote.removeChild(cancelButton);
           newQuote.appendChild(updateButton);
+
+          const updatedQuote = {
+            id: quote.id,
+            quote: quoteContainer.innerText,
+            person: authorContainer.innerText
+          }
+          
+          updadeQuote(updatedQuote)
         });
 
         cancelButton.addEventListener('click', () => {
           newQuote.replaceChild(quoteContainer, newQuoteTextBox);
           newQuote.replaceChild(authorContainer, newAuthorTextBox);
-          
+
           newQuote.removeChild(okButton);
           newQuote.removeChild(cancelButton);
           newQuote.appendChild(updateButton);
         })
                 
-
         updateButton.replaceWith(okButton);
         newQuote.appendChild(cancelButton);
       })
     });
-
   } else {
     quoteContainer.innerHTML = '<p>Your request returned no quotes.</p>';
   }
@@ -125,3 +131,27 @@ fetchByAuthorButton.addEventListener('click', () => {
   });
 });
 
+const updateQuote = async (quote) => {
+  if(JSON.stringify(quote) !== "{}") {
+    try {
+      const response = await fetch('/api/quotes', {
+        method: 'PUT',
+        headers: {"Content-Type": "application/json"}, 
+        body: JSON.stringify(quote)
+      })
+      const data = await handleError(response);
+
+      return data;
+    } catch(err) {
+      console.log(err.message)
+    }
+  }
+}
+
+const handleError = (response) => {
+  if(response.ok) {
+    return response.json();
+  } else {
+    throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+  }
+}
