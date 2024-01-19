@@ -3,7 +3,6 @@ const fetchRandomButton = document.getElementById('fetch-random');
 const fetchByAuthorButton = document.getElementById('fetch-by-author');
 
 const quoteContainer = document.getElementById('quote-container');
-// const quoteText = document.querySelector('.quote');
 const attributionText = document.querySelector('.attribution');
 let updateQuotesBtn;
 
@@ -32,7 +31,6 @@ const renderQuotes = (quotes = []) => {
       updateButton.innerText = 'Update';
       deleteButton.className = 'delete-btns';
       deleteButton.innerText = 'Delete';
-      confirmDeleteText.innerText = 'Delete quote?'
       quoteContainer.appendChild(newQuote);
       newQuote.appendChild(updateButton);
       newQuote.appendChild(deleteButton);
@@ -85,24 +83,30 @@ const renderQuotes = (quotes = []) => {
         deleteButton.replaceWith(cancelButton);
       });
 
-      deleteButton.addEventListener('click', (e) => {
+      deleteButton.addEventListener('click', () => {
         const okButton = document.createElement('button');
         okButton.innerText = 'OK';
 
         const cancelButton = document.createElement('button');
         cancelButton.innerText = 'Cancel';
 
+        confirmDeleteText.innerText = 'Delete quote?'
         updateButton.replaceWith(okButton);
         newQuote.insertBefore(confirmDeleteText, okButton);
         deleteButton.replaceWith(cancelButton);
 
-        okButton.addEventListener('click', (e) => {
+        okButton.addEventListener('click', async () => {
           const indexOfQuote = quotes.findIndex(element => quote.id === element.id);
           if(indexOfQuote !== -1) {
-            quotes.splice(indexOfQuote, 1);
-            newQuote.remove();
+            const deleteMessage = await deleteQuote(quote)
+            if(deleteMessage.ok) {
+              quotes.splice(indexOfQuote, 1);
+              newQuote.remove();
+            } else {
+              confirmDeleteText.innerText('Cannot delete quote, please try again later')
+            }
           }
-        })
+        });
 
         cancelButton.addEventListener('click', () => {
           newQuote.removeChild(confirmDeleteText);
@@ -175,11 +179,34 @@ const updateQuote = async (quote) => {
       console.log(err.message)
     }
   }
-}
+};
+
+const deleteQuote = async (quote) => {
+  if(JSON.stringify(quote) !== "{}") {
+    try {
+      const response = await fetch('/api/quotes', {
+        method: 'DELETE',
+        headers: {"Content-Type": "application/json"}, 
+        body: JSON.stringify(quote)
+      })
+      const data = await handleError(response);
+
+      return data;
+    } catch(err) {
+      console.log(err.message)
+    }
+  }
+};
 
 const handleError = (response) => {
   if(response.ok) {
-    return response.json();
+    if (response.status === 204) {
+      // No response body for a successful deletion (204)
+      return { ok: true };
+    } else {
+      // For other successful responses with a body, parse the JSON
+      return response.json();
+    }
   } else {
     throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
   }
