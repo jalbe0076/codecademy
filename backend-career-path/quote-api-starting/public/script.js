@@ -6,6 +6,24 @@ const quoteContainer = document.getElementById('quote-container');
 const attributionText = document.querySelector('.attribution');
 let updateQuotesBtn;
 
+const createButton = (text, className) => {
+  const button = document.createElement('button');
+  button.innerText = text;
+  button.className = className;
+  return button;
+};
+
+const createTextArea = (value) => {
+  const textArea = document.createElement('textArea');
+  textArea.value = value;
+  return textArea;
+};
+
+const addButtonEventListeners = (okButton, cancelButton, okAction, cancelAction) => {
+  okButton.addEventListener('click', okAction);
+  cancelButton.addEventListener('click', cancelAction);
+};
+
 const resetQuotes = () => {
   quoteContainer.innerHTML = '';
 }
@@ -21,98 +39,89 @@ const renderQuotes = (quotes = []) => {
   if (quotes.length > 0) {
     quotes.forEach(quote => {
       const newQuote = document.createElement('div');
-      const updateButton = document.createElement('button');
-      const deleteButton = document.createElement('button');
-      const confirmDeleteText = document.createElement('p')
       newQuote.className = 'single-quote';
       newQuote.innerHTML = `<div class="quote-text">${quote.quote}</div>
       <div class="attribution">  ${quote.person}</div>`;
-      updateButton.className = `update-btn-${quote.id} update-btns`;
-      updateButton.innerText = 'Update';
-      deleteButton.className = 'delete-btns';
-      deleteButton.innerText = 'Delete';
-      quoteContainer.appendChild(newQuote);
-      newQuote.appendChild(updateButton);
-      newQuote.appendChild(deleteButton);
+      
+      const updateButton = createButton('Update', `update-btn-${quote.id} update-btns`);
+      const deleteButton = createButton('Delete', `delete-btns`);
+      const confirmDeleteText = document.createElement('p');
+   
       const quoteText = newQuote.querySelector('.quote-text');
       const authorContainer = newQuote.querySelector('.attribution');
       
+      quoteContainer.appendChild(newQuote);
+      newQuote.appendChild(updateButton);
+      newQuote.appendChild(deleteButton);
+      
       updateButton.addEventListener('click', (e) => {
-        const newQuoteTextBox = document.createElement('textArea');
-        const newAuthorTextBox = document.createElement('textArea');
-        newQuoteTextBox.value = quoteText.innerText;
-        newAuthorTextBox.value = authorContainer.innerText;
+        const newQuoteTextBox = createTextArea(quoteText.innerText);
+        const newAuthorTextBox = createTextArea(authorContainer.innerText);
 
         newQuote.replaceChild(newQuoteTextBox, quoteText);
         newQuote.replaceChild(newAuthorTextBox, authorContainer);
 
-        const okButton = document.createElement('button');
-        okButton.innerText = 'OK';
+        const okButton = createButton('OK', `ok-btn`);
+        const cancelButton = createButton('Cancel', `cancel-btn`);
 
-        const cancelButton = document.createElement('button');
-        cancelButton.innerText = 'Cancel';
-
-        okButton.addEventListener('click', () => {
-          quoteText.innerText = newQuoteTextBox.value;
-          authorContainer.innerText = newAuthorTextBox.value;
-
-          newQuote.replaceChild(quoteText, newQuoteTextBox);
-          newQuote.replaceChild(authorContainer, newAuthorTextBox);
-
-          okButton.replaceWith(updateButton);
-          cancelButton.replaceWith(deleteButton);
-
-          const updatedQuote = {
-            id: quote.id,
-            quote: quoteText.innerText,
-            person: authorContainer.innerText
+        addButtonEventListeners(okButton, cancelButton, () => {
+            quoteText.innerText = newQuoteTextBox.value;
+            authorContainer.innerText = newAuthorTextBox.value;
+  
+            newQuote.replaceChild(quoteText, newQuoteTextBox);
+            newQuote.replaceChild(authorContainer, newAuthorTextBox);
+  
+            okButton.replaceWith(updateButton);
+            cancelButton.replaceWith(deleteButton);
+  
+            const updatedQuote = {
+              id: quote.id,
+              quote: quoteText.innerText,
+              person: authorContainer.innerText
+            };
+  
+            updateQuote(updatedQuote);
+          }, 
+          () => {
+              newQuote.replaceChild(quoteText, newQuoteTextBox);
+              newQuote.replaceChild(authorContainer, newAuthorTextBox);
+    
+              okButton.replaceWith(updateButton);
+              cancelButton.replaceWith(deleteButton);
           }
+        );
 
-          updateQuote(updatedQuote)
-        });
-
-        cancelButton.addEventListener('click', () => {
-          newQuote.replaceChild(quoteText, newQuoteTextBox);
-          newQuote.replaceChild(authorContainer, newAuthorTextBox);
-
-          okButton.replaceWith(updateButton);
-          cancelButton.replaceWith(deleteButton);
-        })
-                
         updateButton.replaceWith(okButton);
         deleteButton.replaceWith(cancelButton);
       });
 
       deleteButton.addEventListener('click', () => {
-        const okButton = document.createElement('button');
-        okButton.innerText = 'OK';
-
-        const cancelButton = document.createElement('button');
-        cancelButton.innerText = 'Cancel';
+        const okButton = createButton('OK', `ok-btn`);
+        const cancelButton = createButton('Cancel', `cancel-btn`);
 
         confirmDeleteText.innerText = 'Delete quote?'
         updateButton.replaceWith(okButton);
         newQuote.insertBefore(confirmDeleteText, okButton);
         deleteButton.replaceWith(cancelButton);
 
-        okButton.addEventListener('click', async () => {
-          const indexOfQuote = quotes.findIndex(element => quote.id === element.id);
-          if(indexOfQuote !== -1) {
-            const deleteMessage = await deleteQuote(quote)
-            if(deleteMessage.ok) {
-              quotes.splice(indexOfQuote, 1);
-              newQuote.remove();
-            } else {
-              confirmDeleteText.innerText('Cannot delete quote, please try again later')
+        addButtonEventListeners(okButton, cancelButton, async () => {
+            const indexOfQuote = quotes.findIndex(element => quote.id === element.id);
+            if(indexOfQuote !== -1) {
+              const deleteMessage = await deleteQuote(quote)
+              if(deleteMessage.ok) {
+                quotes.splice(indexOfQuote, 1);
+                newQuote.remove();
+              } else {
+                confirmDeleteText.innerText('Cannot delete quote, please try again later')
+              }
             }
+          }, 
+          () => {
+            newQuote.removeChild(confirmDeleteText);
+            okButton.replaceWith(updateButton);
+            cancelButton.replaceWith(deleteButton);
           }
-        });
-
-        cancelButton.addEventListener('click', () => {
-          newQuote.removeChild(confirmDeleteText);
-          okButton.replaceWith(updateButton);
-          cancelButton.replaceWith(deleteButton);
-        })
+        );
       });
     });
   } else {

@@ -5,7 +5,7 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Credit Card Checker Project - JS part 2
   - [x] Mysterious Organism Project - JS part 2
   - [x] Find your hat
-  - [ ] Quote API
+  - [x] Quote API
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path
