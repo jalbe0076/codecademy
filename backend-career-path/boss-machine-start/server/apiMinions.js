@@ -1,6 +1,6 @@
 const express = require('express');
 const minionRouter = express.Router();
-const { getAllFromDatabase, addToDatabase, getFromDatabaseById } = require('./db')
+const { getAllFromDatabase, addToDatabase, getFromDatabaseById, updateInstanceInDatabase } = require('./db')
 
 const modelMinions = 'minions';
 
@@ -32,6 +32,15 @@ minionRouter.param('minionId', (req, res, next, id) => {
 
 minionRouter.get('/:minionId', (req, res, next) => {
     res.send(req.minionById);
+});
+
+minionRouter.put('/:minionId', (req, res, next) => {
+  if(!req.is('json')) {
+    res.status(400).send();
+  } else {
+    const updateMinion = updateInstanceInDatabase(modelMinions, req.body);
+    res.status(201).send(updateMinion);
+  }
 });
 
 module.exports = minionRouter;
