@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllFromDatabase, addToDatabase, getFromDatabaseById, updateInstanceInDatabase } = require('./db');
+const { getAllFromDatabase, addToDatabase, getFromDatabaseById, updateInstanceInDatabase, deleteFromDatabasebyId } = require('./db');
 const checkMillionDollarIdea = require('./checkMillionDollarIdea');
 const ideasRouter = express.Router();
 
@@ -41,6 +41,11 @@ ideasRouter.put('/:ideaId', checkMillionDollarIdea, (req, res, next) => {
     const updatedIdea = updateInstanceInDatabase(modelIdeas, req.ideaById);
     res.status(201).send(updatedIdea);
   }
+});
+
+ideasRouter.delete('/:ideaId', (req, res, next) => {
+  deleteFromDatabasebyId(modelIdeas, req.ideaById.id);
+  res.status(204).send();
 });
 
 module.exports = ideasRouter;
