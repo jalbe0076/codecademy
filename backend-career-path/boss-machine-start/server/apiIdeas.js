@@ -16,7 +16,7 @@ ideasRouter.post('/', checkMillionDollarIdea, (req, res, next) => {
     res.status(400).send('Please send a complete idea');
   } else {
     const addNewIdea = addToDatabase(modelIdeas, newIdea);
-    res.send(addNewIdea);
+    res.status(201).send(addNewIdea);
   }
 });
 
