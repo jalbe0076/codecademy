@@ -1,6 +1,6 @@
 const express = require('express');
 const { getAllFromDatabase, addToDatabase } = require('./db');
-const { all } = require('./apiMinions');
+const checkMillionDollarIdea = require('./checkMillionDollarIdea');
 const ideasRouter = express.Router();
 
 const modelIdeas = 'ideas';
@@ -10,7 +10,7 @@ ideasRouter.get('/', (req, res, next) => {
   res.send(allIdeas);
 });
 
-ideasRouter.post('/', (req, res, next) => {
+ideasRouter.post('/', checkMillionDollarIdea, (req, res, next) => {
   const newIdea = req.body;
   if(!newIdea) {
     res.status(400).send('Please send a complete idea');
