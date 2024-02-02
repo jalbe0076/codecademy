@@ -79,4 +79,9 @@ minionRouter.put('/:minionId/work/:workId', (req, res, next) => {
   }
 });
 
+minionRouter.delete('/:minionId/work/:workId', (req, res, next) => {
+  deleteFromDatabasebyId(modelWork, req.selectedWork.id);
+  res.status(204).send();
+});
+
 module.exports = minionRouter;
