@@ -22,7 +22,7 @@ minionRouter.post('/', (req, res, next) => {
 // validate ID
 minionRouter.param('minionId', (req, res, next, id) => {
   const minionById = getFromDatabaseById(modelMinions, id);
-  if(!minionById) {
+  if(minionById) {
     res.status(404).send('No Minions have that ID');
   } else {
     req.minionById = minionById;

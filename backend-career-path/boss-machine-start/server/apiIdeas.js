@@ -22,8 +22,8 @@ ideasRouter.post('/', checkMillionDollarIdea, (req, res, next) => {
 
 ideasRouter.param('ideaId', (req, res, next, id) => {
   const ideaById = getFromDatabaseById(modelIdeas, id);
-  if(!ideaById) {
-    res.status(404).send();
+  if(ideaById) {
+    res.status(404).send('No Ideas have that ID');
   } else {
     req.ideaById = ideaById;
     next();
@@ -38,7 +38,7 @@ ideasRouter.put('/:ideaId', checkMillionDollarIdea, (req, res, next) => {
   if(!req.is('json')) {
     res.status(404).send();
   } else {
-    const updatedIdea = updateInstanceInDatabase(modelIdeas, req.ideaById);
+    const updatedIdea = updateInstanceInDatabase(modelIdeas, req.body);
     res.status(201).send(updatedIdea);
   }
 });
