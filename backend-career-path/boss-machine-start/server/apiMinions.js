@@ -1,6 +1,6 @@
 const express = require('express');
 const minionRouter = express.Router();
-const { getAllFromDatabase, addToDatabase, getFromDatabaseById, updateInstanceInDatabase } = require('./db')
+const { getAllFromDatabase, addToDatabase, getFromDatabaseById, updateInstanceInDatabase, deleteFromDatabasebyId } = require('./db')
 
 const modelMinions = 'minions';
 
@@ -42,5 +42,10 @@ minionRouter.put('/:minionId', (req, res, next) => {
     res.status(201).send(updateMinion);
   }
 });
+
+minionRouter.delete('/:minionId', (req, res, next) => {
+  deleteFromDatabasebyId(modelMinions, req.minionById.id);
+  res.status(204).send();
+})
 
 module.exports = minionRouter;
