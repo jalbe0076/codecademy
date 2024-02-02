@@ -22,7 +22,7 @@ ideasRouter.post('/', checkMillionDollarIdea, (req, res, next) => {
 
 ideasRouter.param('ideaId', (req, res, next, id) => {
   const ideaById = getFromDatabaseById(modelIdeas, id);
-  if(ideaById) {
+  if(!ideaById) {
     res.status(404).send('No Ideas have that ID');
   } else {
     req.ideaById = ideaById;
