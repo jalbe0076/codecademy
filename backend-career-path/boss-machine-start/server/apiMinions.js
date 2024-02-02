@@ -60,4 +60,23 @@ minionRouter.post('/:minionId/work', (req, res, next) => {
   res.status(201).send(newWork);
 });
 
+minionRouter.param('workId', (req, res, next, id) => {
+  const selectedWork = getFromDatabaseById(modelWork, id);
+  if(!selectedWork) {
+    res.status(400).send();
+  } else {
+    req.selectedWork = selectedWork;
+    next();
+  }
+})
+
+minionRouter.put('/:minionId/work/:workId', (req, res, next) => {
+  if(req.selectedWork.minionId !== req.body.minionId) {
+    res.status(400).send();
+  } else {
+    const updateWork = updateInstanceInDatabase(modelWork, req.body);
+    res.status(201).send(updateWork)
+  }
+});
+
 module.exports = minionRouter;
