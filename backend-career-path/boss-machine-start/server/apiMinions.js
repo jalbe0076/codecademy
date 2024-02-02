@@ -3,6 +3,7 @@ const minionRouter = express.Router();
 const { getAllFromDatabase, addToDatabase, getFromDatabaseById, updateInstanceInDatabase, deleteFromDatabasebyId } = require('./db')
 
 const modelMinions = 'minions';
+const modelWork = 'work';
 
 minionRouter.get('/', (req, res, next) => {
   const allMinions = getAllFromDatabase(modelMinions);
@@ -46,6 +47,12 @@ minionRouter.put('/:minionId', (req, res, next) => {
 minionRouter.delete('/:minionId', (req, res, next) => {
   deleteFromDatabasebyId(modelMinions, req.minionById.id);
   res.status(204).send();
+});
+
+// work endpoints
+minionRouter.get('/:minionId/work', (req, res, next) => {
+  const minionWork = getAllFromDatabase(modelWork).filter(work => work.minionId === req.minionById.id);
+  res.send(minionWork);
 });
 
 module.exports = minionRouter;
