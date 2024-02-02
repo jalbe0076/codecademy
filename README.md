@@ -6,6 +6,7 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Mysterious Organism Project - JS part 2
   - [x] Find your hat
   - [x] Quote API
+  - [x] Boss Machine Start
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path
