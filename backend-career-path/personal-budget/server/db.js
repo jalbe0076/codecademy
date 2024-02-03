@@ -11,10 +11,20 @@ const createEnvelope = (title, budget, spent = 0) => {
   };
 };
 
+const findInstanceById = (id) => {
+  const instanceById = envelopes.find(instance => instance.id === id);
+  if(instanceById !== undefined) {
+    return instanceById;
+  }
+
+  return null;
+};
+
 envelopes.push(createEnvelope('groceries', 500));
 envelopes.push(createEnvelope('dinning out', 300));
 
 module.exports = {
   envelopes,
-  createEnvelope
+  createEnvelope,
+  findInstanceById
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
-const { envelopes, createEnvelope } = require('./db');
+const { envelopes, createEnvelope, findInstanceById } = require('./db');
 
 apiEnvelopes.get('/', (req, res) => {
   res.send(envelopes);
@@ -22,5 +22,19 @@ apiEnvelopes.post('/', (req, res) => {
     res.status(400).send();
   }
 });
+
+apiEnvelopes.param('envId', (req, res, next, id) => {
+  const envById = findInstanceById(parseInt(id));
+  if(!envById) {
+    res.status(400).send();
+  } else {
+    req.envById = envById;
+    next();
+  }
+});
+
+apiEnvelopes.get('/:envId', (req, res) => {
+  res.send(req.envById);
+})
 
 module.exports = apiEnvelopes;
