@@ -8,7 +8,10 @@ app.locals = {
   title: 'Personal Budget'
 }
 
+// middleware to handle cors requests from index.html
 app.use(cors());
+
+// middleware to parse request bodies
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
