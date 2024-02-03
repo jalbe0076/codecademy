@@ -9,12 +9,10 @@ const createEnvelope = (title, budget, spent = 0) => {
     spent,
     balance: budget - spent
   };
-}
+};
 
-envelopes.push(createEnvelope('groceries', 500))
-envelopes.push(createEnvelope('dinning out', 300))
-
-console.log(envelopes)
+envelopes.push(createEnvelope('groceries', 500));
+envelopes.push(createEnvelope('dinning out', 300));
 
 module.exports = {
   envelopes,
