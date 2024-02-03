@@ -7,6 +7,7 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Find your hat
   - [x] Quote API
   - [x] Boss Machine Start
+  - [ ] Personal Budget
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path
