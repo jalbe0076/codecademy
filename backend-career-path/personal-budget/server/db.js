@@ -44,7 +44,7 @@ const findInstanceIndex = (id) => {
 }; 
 
 const deleteInstanceById = (id) => {
-  const instanceIndex = findInstanceById(id);
+  const instanceIndex = findInstanceIndex(id);
   if (instanceIndex !== null) {
     envelopes.splice(instanceIndex, 1);
     return true;
