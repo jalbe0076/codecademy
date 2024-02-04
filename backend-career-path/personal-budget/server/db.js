@@ -27,11 +27,29 @@ const createEnvelope = (title, budget, spent = 0) => {
 
 const findInstanceById = (id) => {
   const instanceById = envelopes.find(instance => instance.id === id);
-  if(instanceById !== undefined) {
+  if (instanceById !== undefined) {
     return instanceById;
   }
 
   return null;
+};
+
+const findInstanceIndex = (id) => {
+  const index = envelopes.findIndex(instance => instance.id === id);
+  if (index !== -1) {
+    return index;
+  }
+
+  return null;
+}; 
+
+const deleteInstanceById = (id) => {
+  const instanceIndex = findInstanceById(id);
+  if (instanceIndex !== null) {
+    envelopes.splice(instanceIndex, 1);
+    return true;
+  }
+  return false;
 };
 
 envelopes.push(createEnvelope('groceries', 500));
@@ -40,5 +58,6 @@ envelopes.push(createEnvelope('dinning out', 300));
 module.exports = {
   envelopes,
   createEnvelope,
-  findInstanceById
+  findInstanceById,
+  deleteInstanceById
 };
