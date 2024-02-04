@@ -35,6 +35,19 @@ apiEnvelopes.param('envId', (req, res, next, id) => {
 
 apiEnvelopes.get('/:envId', (req, res) => {
   res.send(req.envById);
+});
+
+apiEnvelopes.put('/:envId', (req, res) => {
+  const amount = req.body.spend;
+  
+  if (typeof amount !== 'number') {
+    res.status(400).send('Please enter a number.');
+  } else if (amount > req.envById.balance) {
+    res.status(400).send(`Insufficient balance.`);
+  } else {
+    req.envById.updateSpend(amount);
+    res.status(201).send(req.envById);
+  }
 })
 
 module.exports = apiEnvelopes;

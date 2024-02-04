@@ -7,7 +7,21 @@ const createEnvelope = (title, budget, spent = 0) => {
     title,
     budget,
     spent,
-    balance: budget - spent
+    balance: budget - spent,
+
+    updateSpend: function (amt) {
+      if (amt <= this.balance) {
+        this.spent += amt;
+        this.updateBalance();
+        return this;
+      }
+      return null;
+    },
+
+    updateBalance: function () {
+      this.balance = this.budget - this.spent;
+      return this;
+    }
   };
 };
 
