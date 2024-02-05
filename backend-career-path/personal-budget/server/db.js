@@ -21,6 +21,12 @@ const createEnvelope = (title, budget, spent = 0) => {
     updateBalance: function () {
       this.balance = this.budget - this.spent;
       return this;
+    },
+
+    updateBudget: function (amt) {
+      this.budget += amt;
+      this.updateBalance();
+      return this;
     }
   };
 };

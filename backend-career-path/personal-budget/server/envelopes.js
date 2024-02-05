@@ -56,6 +56,17 @@ apiEnvelopes.delete('/:envId', (req, res) => {
   res.status(204).send();
 });
 
+apiEnvelopes.put('/:envId/budget', (req, res) => {
+  const amount = req.body.increase;
+  
+  if (typeof amount !== 'number') {
+    res.status(400).send('Please enter a number.');
+  } else {
+    req.envById.updateBudget(amount);
+    res.status(201).send(req.envById);
+  }
+});
+
 apiEnvelopes.post('/transfer/:from/:to', (req, res) => {
   const fromEnvelope = findInstanceById(req.params.from);
   const toEnvelope = findInstanceById(req.params.to);
