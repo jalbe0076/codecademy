@@ -84,7 +84,7 @@ const validateNumber = (amt) => {
 };
 
 envelopes.push(createEnvelope('groceries', 500));
-envelopes.push(createEnvelope('dinning out', 300));
+envelopes.push(createEnvelope('dining out', 300));
 
 module.exports = {
   envelopes,
