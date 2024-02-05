@@ -76,16 +76,21 @@ const transferBudget = (fromInstance, toInstance, transBalanceAmt) => {
   return false;
 };
 
+const validateNumber = (amt) => {
+  if (typeof amt === 'number') {
+    return true;
+  }
+  return false;
+};
+
 envelopes.push(createEnvelope('groceries', 500));
 envelopes.push(createEnvelope('dinning out', 300));
 
-// console.log(envelopes)
-// transferBudget(1, 2, 100)
-// console.log(envelopes)
 module.exports = {
   envelopes,
   createEnvelope,
   findInstanceById,
   deleteInstanceById,
-  transferBudget
+  transferBudget,
+  validateNumber
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
-const { envelopes, createEnvelope, findInstanceById, deleteInstanceById, transferBudget } = require('./db');
+const { envelopes, createEnvelope, findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
 
 apiEnvelopes.get('/', (req, res) => {
   res.send(envelopes);
@@ -40,7 +40,7 @@ apiEnvelopes.get('/:envId', (req, res) => {
 apiEnvelopes.put('/:envId', (req, res) => {
   const amount = req.body.spend;
   
-  if (typeof amount !== 'number') {
+  if (!validateNumber(amount)) {
     res.status(400).send('Please enter a number.');
   } else if (amount > req.envById.balance) {
     res.status(400).send(`Insufficient balance.`);
@@ -59,7 +59,7 @@ apiEnvelopes.delete('/:envId', (req, res) => {
 apiEnvelopes.put('/:envId/budget', (req, res) => {
   const amount = req.body.increase;
   
-  if (typeof amount !== 'number') {
+  if (!validateNumber(amount)) {
     res.status(400).send('Please enter a number.');
   } else {
     req.envById.updateBudget(amount);
