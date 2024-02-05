@@ -26,7 +26,7 @@ const createEnvelope = (title, budget, spent = 0) => {
 };
 
 const findInstanceById = (id) => {
-  const instanceById = envelopes.find(instance => instance.id === id);
+  const instanceById = envelopes.find(instance => instance.id === parseInt(id));
   if (instanceById !== undefined) {
     return instanceById;
   }
@@ -49,15 +49,37 @@ const deleteInstanceById = (id) => {
     envelopes.splice(instanceIndex, 1);
     return true;
   }
+
+  return false;
+};
+
+const transferBudget = (fromInstance, toInstance, transBalanceAmt) => {
+  if(!transBalanceAmt) return false;
+
+  if (transBalanceAmt <= fromInstance.balance) {
+    fromInstance.budget = fromInstance.budget - transBalanceAmt;
+    fromInstance.updateBalance();
+    toInstance.budget = toInstance.budget + transBalanceAmt;
+    toInstance.updateBalance();
+    return {
+      fromInstance,
+      toInstance
+    };
+  }
+
   return false;
 };
 
 envelopes.push(createEnvelope('groceries', 500));
 envelopes.push(createEnvelope('dinning out', 300));
 
+// console.log(envelopes)
+// transferBudget(1, 2, 100)
+// console.log(envelopes)
 module.exports = {
   envelopes,
   createEnvelope,
   findInstanceById,
-  deleteInstanceById
+  deleteInstanceById,
+  transferBudget
 };
