@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUsers, getUserById, postNewUser } = require('.././db/queries');
+const { getUsers, getUserById, postNewUser, updateUser } = require('.././db/queries');
 const apiUsers = express.Router();
 
 apiUsers.get('/', (req, res) => {
@@ -48,6 +48,20 @@ apiUsers.post('/', (req, res) => {
     .catch(err => {
       console.log(err);
       res.status(500).json({ error: 'Internal server error' });
+    })
+});
+
+apiUsers.put('/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { name, email} = req.body;
+
+  updateUser(id, name, email)
+    .then(user => {
+      if (!user) {
+        res.status(400).json({ error: 'Could not update user' });
+      } else {
+        res.status(200).json('user: ' + user + ' was updated')
+      }
     })
 });
 

@@ -35,10 +35,43 @@ const postNewUser = (name, email) => {
       }
     });
   })
-}
+};
+
+const updateUser = (id, name, email) => {
+  return new Promise((resolve, reject) => {
+    if (!name || !email) {
+      pool.query('SELECT * FROM users WHERE id = $1', [id], (fetchErr, fetchResult) => {
+        if (fetchErr) {
+          reject(fetchErr);
+          return;
+        }
+       
+        name = name ?? fetchResult.rows[0].name;
+        email = email ?? fetchResult.rows[0].email;
+
+        pool.query('UPDATE users SET name = $2, email = $3 WHERE id = $1  RETURNING *', [id, name, email], (err, result) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result.rows[0].id)
+          }
+        });
+      })
+    } else {
+      pool.query('UPDATE users SET name = $2, email = $3 WHERE id = $1 RETURNING *', [id, name, email], (err, result) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result.rows[0].id)
+        }
+      });
+    }
+  });
+};
 
 module.exports = {
   getUsers,
   getUserById,
-  postNewUser
+  postNewUser,
+  updateUser
 };
