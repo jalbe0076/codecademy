@@ -24,7 +24,21 @@ const getUserById = (id) => {
   })
 };
 
+const postNewUser = (name, email) => {
+  console.log(name, email)
+  return new Promise((resolve, reject) => {
+    pool.query('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email], (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(`User ${result.rows[0].name} added with an id of: ${result.rows[0].id}`)
+      }
+    });
+  })
+}
+
 module.exports = {
   getUsers,
-  getUserById
+  getUserById,
+  postNewUser
 };

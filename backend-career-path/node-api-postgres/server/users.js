@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUsers, getUserById } = require('.././db/queries');
+const { getUsers, getUserById, postNewUser } = require('.././db/queries');
 const apiUsers = express.Router();
 
 apiUsers.get('/', (req, res) => {
@@ -13,7 +13,7 @@ apiUsers.get('/', (req, res) => {
     })
     .catch(err => {
       console.log(err);
-      res.status(500).json({ err: 'Internal server error' });
+      res.status(500).json({ error: 'Internal server error' });
     });
 });
 
@@ -30,9 +30,25 @@ apiUsers.get('/:id', (req, res) => {
     })
     .catch(err => {
       console.error(err);
-      res.status(500).json({ err: 'Internal server error' });
-    })
+      res.status(500).json({ error: 'Internal server error' });
+    });
+});
 
+apiUsers.post('/', (req, res) => {
+  const { name, email } = req.body;
+  console.log(name, email)
+  postNewUser(name, email)
+    .then(user => {
+      if (!user) {
+        res.status(400).json({ error: 'Could not create user' });
+      } else {
+        res.status(201).json(user);
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: 'Internal server error' });
+    })
 });
 
 module.exports = apiUsers;
