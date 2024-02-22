@@ -58,9 +58,9 @@ apiUsers.put('/:id', (req, res) => {
   updateUser(id, name, email)
     .then(user => {
       if (!user) {
-        res.status(400).json({ error: 'Could not update user' });
+        res.status(400).json({ error: 'User not found' });
       } else {
-        res.status(200).json('user: ' + user + ' was updated')
+        res.status(200).json('user: ' + user.id + ' was updated')
       }
     })
 });

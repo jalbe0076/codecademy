@@ -45,15 +45,17 @@ const updateUser = (id, name, email) => {
           reject(fetchErr);
           return;
         }
-       
-        name = name ?? fetchResult.rows[0].name;
-        email = email ?? fetchResult.rows[0].email;
+        
+        if (fetchResult.rows[0]) {
+          name = name ?? fetchResult.rows[0].name;
+          email = email ?? fetchResult.rows[0].email;
+        }
 
         pool.query('UPDATE users SET name = $2, email = $3 WHERE id = $1  RETURNING *', [id, name, email], (err, result) => {
           if (err) {
             reject(err);
           } else {
-            resolve(result.rows[0].id)
+            resolve(result.rows[0])
           }
         });
       })
@@ -62,7 +64,7 @@ const updateUser = (id, name, email) => {
         if (err) {
           reject(err);
         } else {
-          resolve(result.rows[0].id)
+          resolve(result.rows[0])
         }
       });
     }
