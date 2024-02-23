@@ -6,7 +6,7 @@ const queryDatabase = (query, params) => {
       if (err) {
         reject(err);
       } else {
-        resolve(results.rows)
+        resolve(results.rows);
       }
     });
   });
@@ -18,46 +18,30 @@ const getUsers = () => {
 
 const getUserById = (id) => {
   return queryDatabase('SELECT * FROM users WHERE id = $1', [id])
-    .then(user => user[0]);
+    .then(user => user[0])
 };
 
 const postNewUser = (name, email) => {
   return queryDatabase('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email])
-    .then(user => `User ${user[0].name} added with an id of: ${user[0].id}`);
+    .then(user => `User ${user[0].name} added with an id of: ${user[0].id}`)
 };
 
 const updateUser = (id, name, email) => {
-  return new Promise((resolve, reject) => {
-    if (!name || !email) {
-      pool.query('SELECT * FROM users WHERE id = $1', [id], (fetchErr, fetchResult) => {
-        if (fetchErr) {
-          reject(fetchErr);
-          return;
-        }
-        
-        if (fetchResult.rows[0]) {
-          name = name ?? fetchResult.rows[0].name;
-          email = email ?? fetchResult.rows[0].email;
+  if (!name || !email) {
+    return queryDatabase('SELECT * FROM users WHERE id = $1', [id])
+      .then(user => {
+        if (user.length) {
+          name = name ?? user[0].name;
+          email = email ?? user[0].email;
         }
 
-        pool.query('UPDATE users SET name = $2, email = $3 WHERE id = $1  RETURNING *', [id, name, email], (err, result) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(result.rows[0]);
-          }
-        });
+        return queryDatabase('UPDATE users SET name = $2, email = $3 WHERE id = $1  RETURNING *', [id, name, email])
+          .then(user => user[0])
       })
-    } else {
-      pool.query('UPDATE users SET name = $2, email = $3 WHERE id = $1 RETURNING *', [id, name, email], (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result.rows[0]);
-        }
-      });
-    }
-  });
+  } else {
+    return queryDatabase('UPDATE users SET name = $2, email = $3 WHERE id = $1  RETURNING *', [id, name, email])
+      .then(user => user[0])
+  }
 };
 
 const deleteUser = (id) => {
