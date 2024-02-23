@@ -54,7 +54,7 @@ const updateUser = (id, name, email) => {
           if (err) {
             reject(err);
           } else {
-            resolve(result.rows[0])
+            resolve(result.rows[0]);
           }
         });
       })
@@ -63,7 +63,7 @@ const updateUser = (id, name, email) => {
         if (err) {
           reject(err);
         } else {
-          resolve(result.rows[0])
+          resolve(result.rows[0]);
         }
       });
     }
@@ -77,9 +77,9 @@ const deleteUser = (id) => {
         reject(err);
       } else {
         if (!results.rows.length) {
-          resolve({ success: false, message: `No user found with ID ${id}` })
+          resolve({ success: false, message: `No user found with ID ${id}` });
         } else {
-          resolve({ success: true, message: `User with ID ${id} deleted successfully` })
+          resolve({ success: true, message: `User with ID ${id} deleted successfully` });
         }
       }
     });
