@@ -1,15 +1,19 @@
 const pool = require('./db-config');
 
-const getUsers = () => {
+const queryDatabase = (query, params) => {
   return new Promise((resolve, reject) => {
-    pool.query('SELECT * FROM users ORDER BY id ASC', (err, results) => {
+    pool.query(query, params, (err, results) => {
       if (err) {
         reject(err);
       } else {
-        resolve(results.rows);
+        resolve(results.rows)
       }
     });
-  })
+  });
+};
+
+const getUsers = () => {
+  return queryDatabase('SELECT * FROM users ORDER BY id ASC');
 };
 
 const getUserById = (id) => {
