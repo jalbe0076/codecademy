@@ -1,5 +1,5 @@
 const express = require('express');
-const { getUsers, getUserById, postNewUser, updateUser } = require('.././db/queries');
+const { getUsers, getUserById, postNewUser, updateUser, deleteUser } = require('.././db/queries');
 const apiUsers = express.Router();
 
 apiUsers.get('/', (req, res) => {
@@ -63,6 +63,23 @@ apiUsers.put('/:id', (req, res) => {
         res.status(200).json('user: ' + user.id + ' was updated')
       }
     })
+});
+
+apiUsers.delete('/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+
+  deleteUser(id) 
+    .then(user => {
+      if (!user.success) {
+        res.status(404).json(user.message);
+      } else {
+        res.status(200).json(user.message)
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ error: 'Internal server error' })
+    });
 });
 
 module.exports = apiUsers;
