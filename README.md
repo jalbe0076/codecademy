@@ -8,7 +8,7 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Quote API
   - [x] Boss Machine Start
   - [x] Personal Budget
-  - [ ] Node API Postgres
+  - [x] Node API Postgres
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path

@@ -2,21 +2,18 @@
 
 ## Project Overview
 
-This project was built with the main purpose to learn how to connect a Database to a Server. Created a RESTful API using node and express and connected to a simple Postgres database. The tutorial used for this was named `CRUD REST API with Node.js, Express, and PostgreSQL` by `Tania Rascia` and can be found [here](https://blog.logrocket.com/crud-rest-api-node-js-express-postgresql/).
+The primary objective of this project was to acquire proficiency in connecting a database to a server. The implementation involved the creation of a RESTful API using Node.js and Express, with integration to a straightforward Postgres database. Noteworthy enhancements beyond the tutorial's scope include the incorporation of robust error handling and maintaining a clear separation of concerns.
+
+The tutorial that guided the development of this project is titled "CRUD REST API with Node.js, Express, and PostgreSQL," authored by Tania Rascia. You can access the tutorial [here](https://blog.logrocket.com/crud-rest-api-node-js-express-postgresql/).
 
 ### Routes
 
-- `/api/envelopes`
-  - GET /api/envelpes to get an array of all envelopes.
-  - POST /api/envelpes to create a new envelope and save it to the database.
-  - `/:envId`
-    - GET /api/envelpes/:envId to get a single envelopes by id.
-    - PUT /api/envelpes/:envId to update a single envelopes by id.
-    - DELETE /api/envelpes/:envId to delete a single envelopes by id.
-    - `/:envId/budget`
-      - PUT /api/envelpes/:envId/budget to update a single envelopes budget by id.
-  - `/transfer/:from/:to`
-    - POST /api/envelpes/transfer/:from/:to to transfer one envelopes budget to another
+- `/users`
+  - GET /users to get an array of all users.
+  - `/:id`
+    - GET /users/:id to get a single user by id.
+    - PUT /users/:id to update a single user by id.
+    - DELETE /users/:id to delete a single user by id.
 
 ### Schemas
 
