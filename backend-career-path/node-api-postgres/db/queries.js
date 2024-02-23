@@ -45,19 +45,14 @@ const updateUser = (id, name, email) => {
 };
 
 const deleteUser = (id) => {
-  return new Promise((resolve, reject) => {
-    pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id], (err, results) => {
-      if (err) {
-        reject(err);
+  return queryDatabase('DELETE FROM users WHERE id = $1 RETURNING *', [id])
+    .then(user => {
+      if (!user.length) {
+        return { success: false, message: `No user found with ID ${id}` };
       } else {
-        if (!results.rows.length) {
-          resolve({ success: false, message: `No user found with ID ${id}` });
-        } else {
-          resolve({ success: true, message: `User with ID ${id} deleted successfully` });
-        }
+        return { success: true, message: `User with ID ${id} deleted successfully` };
       }
-    });
-  });
+    })
 };
 
 module.exports = {
