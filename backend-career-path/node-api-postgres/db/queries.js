@@ -22,15 +22,8 @@ const getUserById = (id) => {
 };
 
 const postNewUser = (name, email) => {
-  return new Promise((resolve, reject) => {
-    pool.query('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email], (err, result) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(`User ${result.rows[0].name} added with an id of: ${result.rows[0].id}`)
-      }
-    });
-  })
+  return queryDatabase('INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *', [name, email])
+    .then(user => `User ${user[0].name} added with an id of: ${user[0].id}`);
 };
 
 const updateUser = (id, name, email) => {

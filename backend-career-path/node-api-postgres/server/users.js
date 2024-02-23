@@ -36,19 +36,17 @@ apiUsers.get('/:id', (req, res) => {
 
 apiUsers.post('/', (req, res) => {
   const { name, email } = req.body;
-  console.log(name, email)
-  postNewUser(name, email)
-    .then(user => {
-      if (!user) {
-        res.status(400).json({ error: 'Could not create user' });
-      } else {
-        res.status(201).json(user);
-      }
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({ error: 'Internal server error' });
-    })
+
+  if (name && email) {
+    postNewUser(name, email)
+      .then(user => res.status(201).json(user))
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({ error: 'Internal server error' });
+      })
+  } else {
+    res.status(400).json({ error: 'Could not create user, name and email required' });
+  }
 });
 
 apiUsers.put('/:id', (req, res) => {
