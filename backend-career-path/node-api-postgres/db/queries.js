@@ -17,15 +17,8 @@ const getUsers = () => {
 };
 
 const getUserById = (id) => {
-  return new Promise((resolve, reject) => {
-    pool.query('SELECT * FROM users WHERE id = $1', [id], (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(results.rows[0]);
-      }
-    });
-  })
+  return queryDatabase('SELECT * FROM users WHERE id = $1', [id])
+    .then(user => user[0]);
 };
 
 const postNewUser = (name, email) => {
