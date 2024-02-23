@@ -24,6 +24,7 @@ The tutorial that guided the development of this project is titled "CRUD REST AP
 
 ## How to Begin
 
+** To run and test code a simple database with a table called users will need to be created on your end to test, ensure the table follows the schema **
 - To start, fork and clone the repository to your local machine.
 - cd into the directory
 - Run `npm install` to install the dependencies of this project 
