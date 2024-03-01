@@ -9,6 +9,7 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Boss Machine Start
   - [x] Personal Budget
   - [x] Node API Postgres
+  - [ ] Orders (API with Swagger)
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path
