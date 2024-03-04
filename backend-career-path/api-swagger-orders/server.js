@@ -46,6 +46,22 @@ server.put('/update/:id', express.text({type: '*/*'}), (request,response)=>{
 
 //Add the /delete/:id code here!
 
+server.delete('/delete/:id', (request,response)=>{
+      const items = orderData.orders
+      const newData = {"orders": []}
+      items.forEach(function(o) {
+            console.log(o)
+            if (o.id == request.params.id){
+                  console.log('Deleting order!') 
+            } else{
+                  newData.orders.push(o)
+            }
+       });
+     
+      fs.writeFileSync('orders.json', JSON.stringify(newData));
+      response.send('Success');
+      console.log('Success');
+});
 
 server.listen(3000,()=>{
       console.log('Express server started at port 3000');
