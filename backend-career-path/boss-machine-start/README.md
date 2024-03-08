@@ -1,4 +1,7 @@
 # Boss Machine
+
+## Tech Stack
+
 <div align="center">
   <img src="https://img.shields.io/badge/Node.js-339933.svg?style=for-the-badge&logo=nodedotjs&logoColor=white" />
   <img src="https://img.shields.io/badge/Nodemon-76D04B.svg?style=for-the-badge&logo=Nodemon&logoColor=white" />
@@ -18,17 +21,17 @@ In this project, I crafted a comprehensive API tailored to serve information for
 ## How to Begin
 
 - Fork and clone the repository to your local machine and open the directory.  
-- Run `npm install` to install the project dependenciesand build the front-end application. 
+- Run `npm install` to install the project dependencies and build the front-end application. 
 - Run `npm run start` to begin your server. You'll see `Server listening on port 4001` in the terminal. 
 - Visit `http://localhost:4001/#/`in your browser to visit the front end once the server is running.
 - In another terminal with the server running, run `npm run test` to see a list of tests
 
-### API Routes
+## API Routes
 
 - Routes live inside the **server** folder. 
 - The 'database' exists in **server/db.js** and is seeded every time the server is restarted.
 
-#### Routes Required
+### Routes
 
 - `/api/minions`
   - GET /api/minions to get an array of all minions.
@@ -52,7 +55,7 @@ In this project, I crafted a comprehensive API tailored to serve information for
   - POST /api/meetings to create a new meeting and save it to the database.
   - DELETE /api/meetings to delete _all_ meetings from the database.
 
-#### Schemas
+### Schemas
 
 - Minion:
   - id: string
