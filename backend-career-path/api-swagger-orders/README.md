@@ -24,7 +24,7 @@ In this project, `Swagger` was used to create an API contract in `.yaml`format. 
 
 - Fork and clone the repository to your local machine and open the directory.  
 - The API contract can be viewed in `openapi.yaml`
-- Run `npm install` to install the project dependenciesand. 
+- Run `npm install` to install the project dependencies. 
 - Run `npm start` to begin your server. You'll see `Express server started at port 3000` in the terminal. 
 - Test the endpoints using `postman`or other similar tools
 
