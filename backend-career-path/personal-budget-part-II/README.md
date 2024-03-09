@@ -1,4 +1,4 @@
-# Personal Budget - Part 1
+# Personal Budget - Part 2
 
 ## Tech Stack
 
@@ -8,16 +8,27 @@
   <img src="https://img.shields.io/badge/Express-000000.svg?style=for-the-badge&logo=Express&logoColor=white" />
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=for-the-badge&logo=JavaScript&logoColor=black" />
   <img src="https://img.shields.io/badge/Postman-FF6C37.svg?style=for-the-badge&logo=Postman&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1.svg?style=for-the-badge&logo=PostgreSQL&logoColor=white" />
   <img src="https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white" />
 </div> 
 
 ## Context
 
-Guided by Codecademy's project directives, the primary objective of this project was to acquire proficiency in building a CRUD RESTful API with `Node` and `Express`. Additionally, the project involved testing the endpoints with `Postman`.
+Guided by Codecademy's project directives, the primary objective of this project was to strengthen database and server implementation skills. The original Personal Budget project underwent significant enhancements, with a particular focus on integrating a `PostgreSQL` database for persistent data storage.
 
 ## Project Overview
 
-Utilizing `Node` and `Express`, I implemented a `RESTful API` designed for managing a personal budget through the principles of `Envelope Budgeting`. The API allows users to create and handle budget envelopes, tracking the balance of each envelope. The server defaults to two envelopes upon initialization, each representing a specific budget category.
+In the transition from Personal Budget - Part 1 to Part 2, the project underwent significant enhancements while retaining its core purpose of using `Node` and `Express` to develop a `RESTful API` for users to manage their budgets through **Envelope Budgeting principles**. The focus was put on using the existing endpoints and not creating new endpoints, for example, new users cannot be created at this point. Only users with an ID of 1 and 2 are available. The key modifications include:
+
+**Database Design:**
+- A database structure was devised using `PostgreSQL`, featuring distinct tables for users, budget_limits, and personal_budgets. This design enables multiple users to manage unique budgets independently. 
+- Error handling mechanisms were introduced to help fortify the application against potential duplications. Functions and triggers were implemented to prevent the creation of duplicate users and enforce sensible budget limits.
+
+**Query Refactoring:**
+- The server-side logic was refactored to incorporate database queries for data retrieval and manipulation. This ensures that data persists across sessions, enhancing the overall user experience.
+
+**User-Centric Approach:**
+- The introduction of distinct tables for users and personalized budgets ensures a user-centric approach to budget management. This allows for a more tailored and individualized budgeting experience.
 
 ## How to Begin
 
@@ -51,19 +62,3 @@ Utilizing `Node` and `Express`, I implemented a `RESTful API` designed for manag
   - budget: number
   - spent: number
   - balance: number
-
-### Default Data
-
-Groceries:
-- id = 1
-- title = groceries
-- budget = 500
-- spent = 0
-- balance = 500
-
-Dining Out:
-- id = 2
-- title = dining out
-- budget = 300
-- spent = 0
-- balance = 300

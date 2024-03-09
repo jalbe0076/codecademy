@@ -7,9 +7,10 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Find your hat
   - [x] Quote API
   - [x] Boss Machine Start
-  - [x] Personal Budget
   - [x] Node API Postgres
   - [x] Orders (API with Swagger)
+  - [x] Personal Budget
+  - [ ] Personal Budget - part II
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path
