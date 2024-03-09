@@ -1,56 +1,46 @@
-# Challenge Project: Quote API
+# Quote API
 
-## Project Goals
-In this project, you’ll be building a small Express.js web API to store and serve different quotes about computers, coding, and technology.
+## Tech Stack
 
-## Project Requirements
-You’ve been given some starter code in the form of a front-end site and some Express.js boilerplate. You’ll use this to build several route handlers to serve up interesting quotes. As you build out your app, test out the functionality either using our front-end or with a tool like Postman. Make sure to re-run `node server.js` as you make changes to the server, and visit `localhost:4001` in the browser to interact with the front-end.
+<div align="center">
+  <img src="https://img.shields.io/badge/Node.js-339933.svg?style=for-the-badge&logo=nodedotjs&logoColor=white" />
+  <img src="https://img.shields.io/badge/Nodemon-76D04B.svg?style=for-the-badge&logo=Nodemon&logoColor=white" />
+  <img src="https://img.shields.io/badge/Express-000000.svg?style=for-the-badge&logo=Express&logoColor=white" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=for-the-badge&logo=JavaScript&logoColor=black" />
+  <img src="https://img.shields.io/badge/GitHub-181717.svg?style=for-the-badge&logo=GitHub&logoColor=white" />
+</div> 
 
-As you work, end your server at any point with `Ctrl + C` in the terminal, and then restart it to see new changes in its behavior.
+## Context
 
-In server.js, we’ve provided you with some imported helper functions and data:
-- A quotes array with some pre-populated quotes about technology. Each quote in the array has a person and quote property. You can use our array or write your own, but make sure to have at least the person and quote properties, as the front-end that we’ve provided expects each quote to have them.
-- The `getRandomElement()` function, which takes an array and returns a random element from that array.
+Guided by Codecademy's project directives, the primary objective of this project was to acquire proficiency in building a CRUD RESTful API with `Node` and `Express`. 
 
-## Tasks
+## Project Overview
 
-- [x] 1. Set your server to listen on the PORT variable.
+Using some starter code in the form of a front-end site and some `Express.js` boilerplate. I implemented a `RESTful API` designed to serve up quotes. The API allows for full CRUD functionality allowing users to get all quotes, a random quote or ot create, update or delete quotes.
 
-  Once you start up the server with `node server.js`, navigate to `localhost:4001` in the browser. You’ll know things are up and running when you load the blue Quote API site in the browser.
+## How to Begin
 
-- [x] 2. Your API should have a GET `/api/quotes/random` route. This route should send back a random quote from the `quotes` data. The response body should have the following shape:
+- Fork and clone the repository to your local machine and open the directory.  
+- Run `npm install` to install the project dependencies and build the front-end application. 
+- Run `node server.js` to begin your server. You'll see `Listening on PORT: 4001` in the terminal. 
+- Visit `http://localhost:4001/` in Postma to test endpoints
 
-  ```
-  {
-    quote: {/* quote object */}
-  }
-  ```
+## API Endpoints
 
-- [x] 3. Your API should have a GET `/api/quotes` route. This route should return all quotes from the data if the request has no query params.
+### Routes
 
-  If there is a query string with a `person` attribute, the route should return all quotes said by the same person. For instance, the data set has multiple quotes for Grace Hopper, so GET `/api/quotes?person=Grace Hopper` should return an array of only those quotes. If there are no quotes for the requested `person`, send back an empty array.
+- `/api/quotes`
+  - GET /api/quotes to get all quotes.
+  - POST /api/quotes to post a new quote.
+  - PUT /api/quotes to update an existing quote using the body id.
+  - DELETE /api/quotes to delete an existing quote using the body id.
+- `/api/quotes/random`
+  - GET /api/quotes/random to get a random quote.
 
-  The response body should have the following shape for all GET `/api/quotes` requests:
+  ### Schema
 
-  ```
-  {
-    quotes: [ /* Array of requested quotes */ ]
-  }
-  ```
-
-- [x] 4. Your API should have a POST `/api/quotes` route for adding new quotes to the data. New quotes will be passed in a query string with two properties: `quote` with the quote text itself, and person with the `person` who is credited with saying the quote.
-
-  This route should verify that both properties exist in the request query string and send a `400` response if it does not. If all is well, this route handler should add the new quote object to the data array and send back a response with the following shape:
-
-  ```
-  {
-    quote: {/* new quote object */}
-  }
-  ```
-
-- [ ] 5. If you’d like to extend your app, here are some ideas to try, but you can also try out your own:
-
-  - [x] Add a PUT route for updating quotes in the data. This might require adding some sort of unique ID for each quote in the array in data.js.
-  - [x] Add a DELETE route for deleting quotes from the data array. As with PUT, this might require adding IDs to the data array and using `req.params`. For both of these ideas, you’ll be able to interact via Postman.
-  - [ ] Add other data to the array, such as the year of each quote, and try to display it on the front-end.
-  - [ ] Add another resource to your API in addition to quotes, such as biographical blurbs (you’ll need to find your own data for this new resource). Use Express Routers to keep your code simple and separated into different files for each router.
+  - type: object
+    - id: number
+    - quote: string
+    - person: string
+    
