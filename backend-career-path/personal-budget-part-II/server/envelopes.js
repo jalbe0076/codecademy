@@ -1,9 +1,21 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
 const { envelopes, createEnvelope, findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
+const { getAllEnvelopes } = require('../db/queries');
 
 apiEnvelopes.get('/', (req, res) => {
-  res.send(envelopes);
+  getAllEnvelopes(1)
+    .then(envelopes => {
+      if (!envelopes.length) {
+        res.status(404).json({ error: 'Envelopes not found' });
+      } else {
+        res.status(200).json(envelopes);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(500).send({ error: 'Internal Server Error' });
+    });
 });
 
 apiEnvelopes.post('/', (req, res) => {

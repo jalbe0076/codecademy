@@ -8,3 +8,11 @@ const queryDatabase = (query, params) => {
     });
   });
 };
+
+const getAllEnvelopes = (userId) => {
+  return queryDatabase('SELECT * FROM personal_budget WHERE user_id = $1', [userId])
+}
+
+module.exports = {
+  getAllEnvelopes
+}
