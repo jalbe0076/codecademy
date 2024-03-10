@@ -1,10 +1,31 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
 const { envelopes, createEnvelope, findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
-const { getAllEnvelopes } = require('../db/queries');
+const { getAllEnvelopes, isValidUserId } = require('../db/queries');
+
+// user auth is not properly implemented, this will allow anyone to check the database with different users
+const validateUserId = (req, res, next) => {
+  const userId = parseInt(req.query.user_id) || 1;
+
+  isValidUserId(userId)
+    .then(userId => {
+      if(!userId) {
+        res.status(400).json({ message: 'Invalid user ID' })
+      } else {
+        req.userId = userId.id;
+        next();
+      }
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).send({ error: 'Internal Server Error' });
+    })
+}
+
+apiEnvelopes.use('/', validateUserId);
 
 apiEnvelopes.get('/', (req, res) => {
-  getAllEnvelopes(1)
+  getAllEnvelopes(req.userId)
     .then(envelopes => {
       if (!envelopes.length) {
         res.status(404).json({ error: 'Envelopes not found' });
