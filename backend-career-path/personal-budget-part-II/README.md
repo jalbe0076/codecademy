@@ -40,6 +40,12 @@ In the transition from Personal Budget - Part 1 to Part 2, the project underwent
 
 ## API Routes
 
+**You can manually change the user ID using query paramaters, if it's omited user ID defaults to 1**
+
+Example:
+- `/api/envelopes?user_id=1` - Sets the user ID to 1.
+- `/api/envelopes?user_id=2` - Sets the user ID to 2.
+
 ### Routes
 
 - `/api/envelopes`
