@@ -1,7 +1,8 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
-const { envelopes, findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
+const { findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
 const { getAllEnvelopes, isValidUserId, postNewEnvelope } = require('../db/queries');
+const { handleError } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
 const validateUserId = (req, res, next) => {
@@ -9,17 +10,14 @@ const validateUserId = (req, res, next) => {
 
   isValidUserId(userId)
     .then(userId => {
-      if(!userId) {
+      if (!userId) {
         res.status(400).json({ message: 'Invalid user ID' })
       } else {
         req.userId = userId.id;
         next();
       }
     })
-    .catch(error => {
-      console.log(error);
-      res.status(500).send({ error: 'Internal Server Error' });
-    })
+    .catch(error => handleError(res, 500, error))
 }
 
 apiEnvelopes.use('/', validateUserId);
@@ -34,33 +32,30 @@ apiEnvelopes.get('/', (req, res) => {
         res.status(200).json(envelopes);
       }
     })
-    .catch((error) => {
-      console.log(error);
-      res.status(500).send({ error: 'Internal Server Error' });
-    });
+    .catch((error) => handleError(res, 500, error));
 });
 
 apiEnvelopes.post('/', (req, res) => {
-  const { title, budget, spent} = req.body;
+  const { title, budget, spent } = req.body;
 
-  if(title && budget) {
+  if (title && budget) {
     postNewEnvelope(req.userId, title, budget, spent)
       .then(newEnvelope => {
-        if(newEnvelope.exceedLimit) {
+        if (newEnvelope.exceedLimit) {
           res.status(400).send('Exceeded budget limit');
         } else {
           res.status(201).json(newEnvelope)
         }
       })
-      .catch(error => res.status(500).send(error.message || 'Internal Server Error'))
+      .catch(error => handleError(res, 500, error))
   } else {
     res.status(400).send('Invalid request');
   }
 });
 
-apiEnvelopes.param('envId', (req, res, next, id) => {
+apiEnvelopes.param('envId', (req, res, next, id) => {
   const envById = findInstanceById(id);
-  if(!envById) {
+  if (!envById) {
     res.status(400).send();
   } else {
     req.envById = envById;
@@ -72,9 +67,9 @@ apiEnvelopes.get('/:envId', (req, res) => {
   res.send(req.envById);
 });
 
-apiEnvelopes.put('/:envId', (req, res) => {
+apiEnvelopes.put('/:envId', (req, res) => {
   const amount = req.body.spend;
-  
+
   if (!validateNumber(amount)) {
     res.status(400).send('Please enter a number.');
   } else if (amount > req.envById.balance) {
@@ -91,9 +86,9 @@ apiEnvelopes.delete('/:envId', (req, res) => {
   res.status(204).send();
 });
 
-apiEnvelopes.put('/:envId/budget', (req, res) => {
+apiEnvelopes.put('/:envId/budget', (req, res) => {
   const amount = req.body.increase;
-  
+
   if (!validateNumber(amount)) {
     res.status(400).send('Please enter a number.');
   } else {
@@ -107,7 +102,7 @@ apiEnvelopes.post('/transfer/:from/:to', (req, res) => {
   const toEnvelope = findInstanceById(req.params.to);
   const amount = req.body.amount;
 
-  if(!fromEnvelope || !toEnvelope) {
+  if (!fromEnvelope || !toEnvelope) {
     res.status(404).send('Envelopes not found');
     return;
   }
@@ -119,6 +114,10 @@ apiEnvelopes.post('/transfer/:from/:to', (req, res) => {
   } else {
     res.status(400).send('Insuficient transfer amount.');
   }
+});
+
+apiEnvelopes.use((err, req, res, next) => {
+  handleError(res, err.status || 500, err)
 });
 
 module.exports = apiEnvelopes;
