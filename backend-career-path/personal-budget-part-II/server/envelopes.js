@@ -1,7 +1,7 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
-const { envelopes, createEnvelope, findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
-const { getAllEnvelopes, isValidUserId } = require('../db/queries');
+const { envelopes, findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
+const { getAllEnvelopes, isValidUserId, postNewEnvelope } = require('../db/queries');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
 const validateUserId = (req, res, next) => {
@@ -24,6 +24,7 @@ const validateUserId = (req, res, next) => {
 
 apiEnvelopes.use('/', validateUserId);
 
+// Endpoints
 apiEnvelopes.get('/', (req, res) => {
   getAllEnvelopes(req.userId)
     .then(envelopes => {
@@ -41,18 +42,19 @@ apiEnvelopes.get('/', (req, res) => {
 
 apiEnvelopes.post('/', (req, res) => {
   const { title, budget, spent} = req.body;
+
   if(title && budget) {
-    if(spent) {
-      const newEnvelope = createEnvelope(title, budget, spent);
-      envelopes.push(newEnvelope);
-      res.status(201).send(newEnvelope);
-    } else {
-      const newEnvelope = createEnvelope(title, budget);
-      envelopes.push(newEnvelope);
-      res.status(201).send(newEnvelope);
-    }
+    postNewEnvelope(req.userId, title, budget, spent)
+      .then(newEnvelope => {
+        if(newEnvelope.exceedLimit) {
+          res.status(400).send('Exceeded budget limit');
+        } else {
+          res.status(201).json(newEnvelope)
+        }
+      })
+      .catch(error => res.status(500).send(error.message || 'Internal Server Error'))
   } else {
-    res.status(400).send();
+    res.status(400).send('Invalid request');
   }
 });
 
