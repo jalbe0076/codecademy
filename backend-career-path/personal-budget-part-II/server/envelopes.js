@@ -2,7 +2,7 @@ const express = require('express');
 const apiEnvelopes = express.Router();
 const { findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
 const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById } = require('../db/queries');
-const { handleError } = require('./utils');
+const { handleError, parseEnvelope } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
 const validateUserId = (req, res, next) => {
@@ -29,6 +29,9 @@ apiEnvelopes.get('/', (req, res) => {
       if (!envelopes.length) {
         res.status(404).json({ error: 'Envelopes not found' });
       } else {
+        envelopes.forEach(envelope => {
+          envelope = parseEnvelope(envelope)
+        })
         res.status(200).json(envelopes);
       }
     })
@@ -47,7 +50,8 @@ apiEnvelopes.post('/', (req, res) => {
         if (newEnvelope.exceedLimit) {
           res.status(400).send('Exceeded budget limit');
         } else {
-          res.status(201).json(newEnvelope);
+          const parsedEnvelope = parseEnvelope(newEnvelope);
+          res.status(201).json(parsedEnvelope);
         }
       })
       .catch(error => handleError(res, 500, error));
@@ -72,7 +76,8 @@ apiEnvelopes.get('/:envId', (req, res) => {
       if (!envelopeById.length) {
         res.status(404).json({ message: `Envelope with ID ${req.envById} not found`})
       } else {
-        res.json(envelopeById[0])
+        const parsedEnvelope = parseEnvelope(envelopeById[0]);
+        res.json(parsedEnvelope)
       }
     })
     .catch(error => handleError(res, 500, error))
