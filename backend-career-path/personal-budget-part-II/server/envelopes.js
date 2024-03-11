@@ -2,7 +2,7 @@ const express = require('express');
 const apiEnvelopes = express.Router();
 const { findInstanceById, deleteInstanceById, transferBudget, validateNumber, envelopes } = require('./db');
 const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById, updatePersonalSpent } = require('../db/queries');
-const { handleError, parseEnvelope, fetchEnvelopeById } = require('./utils');
+const { handleError, parseEnvelope, fetchEnvelopeById, validateUrlId } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
 const validateUserId = (req, res, next) => {
@@ -61,18 +61,18 @@ apiEnvelopes.post('/', (req, res) => {
 });
 
 apiEnvelopes.param('envId', (req, res, next, id) => {
-  const envById = parseInt(id);
-  if (isNaN(envById)) {
+  const envelopeId = parseInt(id);
+  if (isNaN(envelopeId)) {
     res.status(400).json({ error: 'Invalid envelope ID' });
   } else {
-    req.envById = envById;
+    req.envelopeId = envelopeId;
     next();
   }
 });
 
 apiEnvelopes.get('/:envId', async (req, res) => {
   try {
-  const envelope = await fetchEnvelopeById(req.userId, req.envById, res);
+  const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
   res.json(envelope);
   } catch (error) {
     handleError(res, 404, error.message);
@@ -80,21 +80,26 @@ apiEnvelopes.get('/:envId', async (req, res) => {
 });
 
 apiEnvelopes.put('/:envId', async (req, res) => {
-  const { spend }= req.body;
+  const { spend, id }= req.body;
   const parsedSpend = Number(spend);
+
+  if(!validateUrlId(req.envelopeId, id)) {
+    res.status(400).send('URL ID does not match the envelope ID.');
+    return;
+  }
 
   if (isNaN(parsedSpend)) {
     res.status(400).send('Please enter a number.');
   } else {
     try {
-      const envelope = await fetchEnvelopeById(req.userId, req.envById, res);
-      const { spent, balance } = envelope;
+      const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
+      const { spent, budget } = envelope;
       const newSpent = spent + parsedSpend;
 
-      if (newSpent > balance) {
+      if (newSpent > budget) {
         res.status(400).send(`Insufficient balance.`);
       } else {
-        const updatedEnvelope = await updatePersonalSpent(req.userId, req.envById, newSpent);
+        const updatedEnvelope = await updatePersonalSpent(req.userId, req.envelopeId, newSpent);
         res.status(201).json(parseEnvelope(updatedEnvelope));
       }
     } catch (error) {
@@ -104,7 +109,7 @@ apiEnvelopes.put('/:envId', async (req, res) => {
 });
 
 apiEnvelopes.delete('/:envId', (req, res) => {
-  const envId = req.envById.id;
+  const envId = req.envelopeId.id;
   deleteInstanceById(envId);
   res.status(204).send();
 });
@@ -115,8 +120,8 @@ apiEnvelopes.put('/:envId/budget', (req, res) => {
   if (!validateNumber(amount)) {
     res.status(400).send('Please enter a number.');
   } else {
-    req.envById.updateBudget(amount);
-    res.status(201).send(req.envById);
+    req.envelopeId.updateBudget(amount);
+    res.status(201).send(req.envelopeId);
   }
 });
 

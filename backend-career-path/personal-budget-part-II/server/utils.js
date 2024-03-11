@@ -13,6 +13,10 @@ const parseEnvelope = (envelope) => {
   return envelope;
 };
 
+const validateUrlId = (urlId, bodyId) => {
+  return urlId === bodyId;
+};
+
 // Query handler functions
 const fetchEnvelopeById = async (userId, envById, res) => {
   try {
@@ -33,5 +37,6 @@ const fetchEnvelopeById = async (userId, envById, res) => {
 module.exports = {
   handleError,
   parseEnvelope,
-  fetchEnvelopeById
+  fetchEnvelopeById,
+  validateUrlId
 }

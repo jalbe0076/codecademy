@@ -54,10 +54,15 @@ const updatePersonalSpent = (user_id, envById, newSpent) => {
   .then(updatedEnvelope => updatedEnvelope[0])
 };
 
+const deleteEnvelope = () => {
+
+};
+
 module.exports = {
   getAllEnvelopes,
   getEnvelopeById,
   isValidUserId,
   postNewEnvelope,
-  updatePersonalSpent
+  updatePersonalSpent,
+  deleteEnvelope
 }
