@@ -7,7 +7,6 @@ const { handleError, parseEnvelope, fetchEnvelopeById, validateUrlId } = require
 // user auth is not properly implemented, this will allow anyone to check the database with different users
 const validateUserId = (req, res, next) => {
   const userId = parseInt(req.query.user_id) || 1;
-
   isValidUserId(userId)
     .then(userId => {
       if (!userId) {
@@ -73,7 +72,7 @@ apiEnvelopes.param('envId', (req, res, next, id) => {
 apiEnvelopes.get('/:envId', async (req, res) => {
   try {
   const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
-  res.json(envelope);
+  envelope && res.json(envelope);
   } catch (error) {
     handleError(res, 404, error.message);
   }
@@ -93,6 +92,8 @@ apiEnvelopes.put('/:envId', async (req, res) => {
   } else {
     try {
       const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
+      if(!envelope) return
+      
       const { spent, budget } = envelope;
       const newSpent = spent + parsedSpend;
 
@@ -103,6 +104,7 @@ apiEnvelopes.put('/:envId', async (req, res) => {
         res.status(201).json(parseEnvelope(updatedEnvelope));
       }
     } catch (error) {
+      // console.log('in catch', error)
       handleError(res, 404, error.message);
     }
   }
