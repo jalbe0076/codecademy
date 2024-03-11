@@ -10,8 +10,12 @@ const queryDatabase = (query, params) => {
 };
 
 const getAllEnvelopes = (userId) => {
-  return queryDatabase('SELECT * FROM personal_budget WHERE user_id = $1', [userId]);
+  return queryDatabase('SELECT id, title, budget, spent FROM personal_budget WHERE user_id = $1', [userId]);
 };
+
+const getEnvelopeById = (userId, envById) => {
+  return queryDatabase('SELECT id, title, budget, spent FROM personal_budget WHERE user_id = $1 AND id = $2', [userId, envById])
+}
 
 const isValidUserId = (userId) => {
   return queryDatabase('SELECT * FROM users WHERE id = $1', [userId])
@@ -42,6 +46,7 @@ const postNewEnvelope = (userId, title, budget, spent = 0) => {
 
 module.exports = {
   getAllEnvelopes,
+  getEnvelopeById,
   isValidUserId,
   postNewEnvelope
 }

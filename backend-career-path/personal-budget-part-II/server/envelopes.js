@@ -1,7 +1,7 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
 const { findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
-const { getAllEnvelopes, isValidUserId, postNewEnvelope } = require('../db/queries');
+const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById } = require('../db/queries');
 const { handleError } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
@@ -39,15 +39,18 @@ apiEnvelopes.post('/', (req, res) => {
   const { title, budget, spent } = req.body;
 
   if (title && budget) {
-    postNewEnvelope(req.userId, title, budget, spent)
+    const parsedBudget = Number(budget);
+    const parsedSpent = spent === 'undefined' ? Number(spent) : spent;
+
+    postNewEnvelope(req.userId, title, parsedBudget, parsedSpent)
       .then(newEnvelope => {
         if (newEnvelope.exceedLimit) {
           res.status(400).send('Exceeded budget limit');
         } else {
-          res.status(201).json(newEnvelope)
+          res.status(201).json(newEnvelope);
         }
       })
-      .catch(error => handleError(res, 500, error))
+      .catch(error => handleError(res, 500, error));
   } else {
     res.status(400).send('Invalid request');
   }
@@ -64,7 +67,15 @@ apiEnvelopes.param('envId', (req, res, next, id) => {
 });
 
 apiEnvelopes.get('/:envId', (req, res) => {
-  res.send(req.envById);
+  getEnvelopeById(req.userId, req.envById)
+    .then(envelopeById => {
+      if (!envelopeById.length) {
+        res.status(404).json({ message: `Envelope with ID ${req.envById} not found`})
+      } else {
+        res.json(envelopeById[0])
+      }
+    })
+    .catch(error => handleError(res, 500, error))
 });
 
 apiEnvelopes.put('/:envId', (req, res) => {
