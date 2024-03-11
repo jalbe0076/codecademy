@@ -54,9 +54,9 @@ apiEnvelopes.post('/', (req, res) => {
 });
 
 apiEnvelopes.param('envId', (req, res, next, id) => {
-  const envById = findInstanceById(id);
-  if (!envById) {
-    res.status(400).send();
+  const envById = parseInt(id);
+  if (isNaN(envById)) {
+    res.status(400).json({ error: 'Invalid envelope ID' });
   } else {
     req.envById = envById;
     next();
