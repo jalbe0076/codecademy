@@ -44,9 +44,20 @@ const postNewEnvelope = (userId, title, budget, spent = 0) => {
   });
 };
 
+const updatePersonalSpent = (user_id, envById, newSpent) => {
+  return queryDatabase(
+    `UPDATE personal_budget
+    SET spent = $3
+    WHERE user_id = $1 AND id = $2
+    RETURNING id, title, budget, spent`, [user_id, envById, newSpent]
+  )
+  .then(updatedEnvelope => updatedEnvelope[0])
+};
+
 module.exports = {
   getAllEnvelopes,
   getEnvelopeById,
   isValidUserId,
-  postNewEnvelope
+  postNewEnvelope,
+  updatePersonalSpent
 }

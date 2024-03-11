@@ -1,8 +1,8 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
-const { findInstanceById, deleteInstanceById, transferBudget, validateNumber } = require('./db');
-const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById } = require('../db/queries');
-const { handleError, parseEnvelope } = require('./utils');
+const { findInstanceById, deleteInstanceById, transferBudget, validateNumber, envelopes } = require('./db');
+const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById, updatePersonalSpent } = require('../db/queries');
+const { handleError, parseEnvelope, fetchEnvelopeById } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
 const validateUserId = (req, res, next) => {
@@ -70,29 +70,36 @@ apiEnvelopes.param('envId', (req, res, next, id) => {
   }
 });
 
-apiEnvelopes.get('/:envId', (req, res) => {
-  getEnvelopeById(req.userId, req.envById)
-    .then(envelopeById => {
-      if (!envelopeById.length) {
-        res.status(404).json({ message: `Envelope with ID ${req.envById} not found`})
-      } else {
-        const parsedEnvelope = parseEnvelope(envelopeById[0]);
-        res.json(parsedEnvelope)
-      }
-    })
-    .catch(error => handleError(res, 500, error))
+apiEnvelopes.get('/:envId', async (req, res) => {
+  try {
+  const envelope = await fetchEnvelopeById(req.userId, req.envById, res);
+  res.json(envelope);
+  } catch (error) {
+    handleError(res, 404, error.message);
+  }
 });
 
-apiEnvelopes.put('/:envId', (req, res) => {
-  const amount = req.body.spend;
+apiEnvelopes.put('/:envId', async (req, res) => {
+  const { spend }= req.body;
+  const parsedSpend = Number(spend);
 
-  if (!validateNumber(amount)) {
+  if (isNaN(parsedSpend)) {
     res.status(400).send('Please enter a number.');
-  } else if (amount > req.envById.balance) {
-    res.status(400).send(`Insufficient balance.`);
   } else {
-    req.envById.updateSpend(amount);
-    res.status(201).send(req.envById);
+    try {
+      const envelope = await fetchEnvelopeById(req.userId, req.envById, res);
+      const { spent, balance } = envelope;
+      const newSpent = spent + parsedSpend;
+
+      if (newSpent > balance) {
+        res.status(400).send(`Insufficient balance.`);
+      } else {
+        const updatedEnvelope = await updatePersonalSpent(req.userId, req.envById, newSpent);
+        res.status(201).json(parseEnvelope(updatedEnvelope));
+      }
+    } catch (error) {
+      handleError(res, 404, error.message);
+    }
   }
 });
 
