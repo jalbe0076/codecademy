@@ -1,7 +1,7 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
 const { findInstanceById, deleteInstanceById, transferBudget, validateNumber, envelopes } = require('./db');
-const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById, updatePersonalSpent } = require('../db/queries');
+const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById, updatePersonalSpent, deleteEnvelope } = require('../db/queries');
 const { handleError, parseEnvelope, fetchEnvelopeById, validateUrlId } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
@@ -21,7 +21,8 @@ const validateUserId = (req, res, next) => {
 
 apiEnvelopes.use('/', validateUserId);
 
-// Endpoints
+// ENDPOINTS FOR /api/envelopes
+
 apiEnvelopes.get('/', (req, res) => {
   getAllEnvelopes(req.userId)
     .then(envelopes => {
@@ -58,6 +59,8 @@ apiEnvelopes.post('/', (req, res) => {
     res.status(400).send('Invalid request');
   }
 });
+
+// ENDPOINTS FOR /api/envelopes/:envId
 
 apiEnvelopes.param('envId', (req, res, next, id) => {
   const envelopeId = parseInt(id);
@@ -104,16 +107,25 @@ apiEnvelopes.put('/:envId', async (req, res) => {
         res.status(201).json(parseEnvelope(updatedEnvelope));
       }
     } catch (error) {
-      // console.log('in catch', error)
       handleError(res, 404, error.message);
     }
   }
 });
 
 apiEnvelopes.delete('/:envId', (req, res) => {
-  const envId = req.envelopeId.id;
-  deleteInstanceById(envId);
-  res.status(204).send();
+  const envId = req.envelopeId;
+
+  deleteEnvelope(req.userId, envId)
+    .then(results => {
+      if (!results.length) {
+        res.status(404).json({ message: `Envelope with ID ${envId} not found` });
+      } else {
+        res.status(204).send();
+      }
+    })
+    .catch((error) => {
+      handleError(res, 500, error); 
+    })
 });
 
 apiEnvelopes.put('/:envId/budget', (req, res) => {

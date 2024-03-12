@@ -13,8 +13,8 @@ const getAllEnvelopes = (userId) => {
   return queryDatabase('SELECT id, title, budget, spent FROM personal_budget WHERE user_id = $1', [userId]);
 };
 
-const getEnvelopeById = (userId, envById) => {
-  return queryDatabase('SELECT id, title, budget, spent FROM personal_budget WHERE user_id = $1 AND id = $2', [userId, envById])
+const getEnvelopeById = (userId, envelopeId) => {
+  return queryDatabase('SELECT id, title, budget, spent FROM personal_budget WHERE user_id = $1 AND id = $2', [userId, envelopeId])
 }
 
 const isValidUserId = (userId) => {
@@ -44,18 +44,18 @@ const postNewEnvelope = (userId, title, budget, spent = 0) => {
   });
 };
 
-const updatePersonalSpent = (user_id, envById, newSpent) => {
+const updatePersonalSpent = (user_id, envelopeId, newSpent) => {
   return queryDatabase(
     `UPDATE personal_budget
     SET spent = $3
     WHERE user_id = $1 AND id = $2
-    RETURNING id, title, budget, spent`, [user_id, envById, newSpent]
+    RETURNING id, title, budget, spent`, [user_id, envelopeId, newSpent]
   )
   .then(updatedEnvelope => updatedEnvelope[0])
 };
 
-const deleteEnvelope = () => {
-
+const deleteEnvelope = (userId, envelopeId) => {
+  return queryDatabase(`DELETE FROM personal_budget WHERE user_id = $1 AND id = $2 RETURNING *`, [userId, envelopeId])
 };
 
 module.exports = {
