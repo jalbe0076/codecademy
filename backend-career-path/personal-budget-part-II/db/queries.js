@@ -1,4 +1,5 @@
-const pool = require('./db-config');
+const pool = require('./db-config.js');
+const { parseEnvelope } = require('../server/utils.js')
 
 // Function to execute a database query asynchnously using Promises
 const queryDatabase = (query, params) => {
@@ -58,11 +59,38 @@ const deleteEnvelope = (userId, envelopeId) => {
   return queryDatabase(`DELETE FROM personal_budget WHERE user_id = $1 AND id = $2 RETURNING *`, [userId, envelopeId])
 };
 
+const updatePersonalBudget = (userId, envelopeId, newBudget) => {
+  return queryDatabase(
+    `UPDATE personal_budget
+    SET budget = $3
+    WHERE user_id = $1 AND id = $2
+    RETURNING id, title, budget, spent`, [ userId, envelopeId, newBudget]);
+};
+
+// Query handler functions
+const fetchEnvelopeById = async (userId, envById, res) => {
+  try {
+    const envelopeById = await getEnvelopeById(userId, envById);
+    if (!envelopeById.length) {
+      res.status(404).json({ message: `Envelope with ID ${envById} not found` });
+      return null;  
+    }
+
+    const parsedEnvelope = parseEnvelope(envelopeById[0]);
+    return parsedEnvelope;
+  } catch (error) {
+    handleError(res, 500, error);
+    return null;
+  }
+}
+
 module.exports = {
   getAllEnvelopes,
   getEnvelopeById,
   isValidUserId,
   postNewEnvelope,
   updatePersonalSpent,
-  deleteEnvelope
+  deleteEnvelope,
+  updatePersonalBudget,
+  fetchEnvelopeById
 }

@@ -1,8 +1,8 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
-const { findInstanceById, deleteInstanceById, transferBudget, validateNumber, envelopes } = require('./db');
-const { getAllEnvelopes, isValidUserId, postNewEnvelope, getEnvelopeById, updatePersonalSpent, deleteEnvelope } = require('../db/queries');
-const { handleError, parseEnvelope, fetchEnvelopeById, validateUrlId } = require('./utils');
+const { findInstanceById, transferBudget } = require('./db');
+const { getAllEnvelopes, isValidUserId, postNewEnvelope, updatePersonalSpent, deleteEnvelope, updatePersonalBudget, fetchEnvelopeById } = require('../db/queries');
+const { handleError, parseEnvelope, validateUrlId } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
 const validateUserId = (req, res, next) => {
@@ -16,7 +16,7 @@ const validateUserId = (req, res, next) => {
         next();
       }
     })
-    .catch(error => handleError(res, 500, error))
+    .catch(error => handleError(res, 500, error.message))
 }
 
 apiEnvelopes.use('/', validateUserId);
@@ -35,7 +35,7 @@ apiEnvelopes.get('/', (req, res) => {
         res.status(200).json(envelopes);
       }
     })
-    .catch((error) => handleError(res, 500, error));
+    .catch((error) => handleError(res, 500, error.message));
 });
 
 apiEnvelopes.post('/', (req, res) => {
@@ -54,7 +54,7 @@ apiEnvelopes.post('/', (req, res) => {
           res.status(201).json(parsedEnvelope);
         }
       })
-      .catch(error => handleError(res, 500, error));
+      .catch(error => handleError(res, 500, error.message));
   } else {
     res.status(400).send('Invalid request');
   }
@@ -74,18 +74,18 @@ apiEnvelopes.param('envId', (req, res, next, id) => {
 
 apiEnvelopes.get('/:envId', async (req, res) => {
   try {
-  const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
-  envelope && res.json(envelope);
+    const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
+    envelope && res.json(envelope);
   } catch (error) {
-    handleError(res, 404, error.message);
+    handleError(res, 500, error.message);
   }
 });
 
 apiEnvelopes.put('/:envId', async (req, res) => {
-  const { spend, id }= req.body;
+  const { spend, id } = req.body;
   const parsedSpend = Number(spend);
 
-  if(!validateUrlId(req.envelopeId, id)) {
+  if (!validateUrlId(req.envelopeId, id)) {
     res.status(400).send('URL ID does not match the envelope ID.');
     return;
   }
@@ -95,8 +95,8 @@ apiEnvelopes.put('/:envId', async (req, res) => {
   } else {
     try {
       const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
-      if(!envelope) return
-      
+      if (!envelope) return
+
       const { spent, budget } = envelope;
       const newSpent = spent + parsedSpend;
 
@@ -124,18 +124,32 @@ apiEnvelopes.delete('/:envId', (req, res) => {
       }
     })
     .catch((error) => {
-      handleError(res, 500, error); 
+      handleError(res, 500, error.message);
     })
 });
 
-apiEnvelopes.put('/:envId/budget', (req, res) => {
-  const amount = req.body.increase;
+// change an envelopes budget by id
+apiEnvelopes.put('/:envId/budget', async (req, res) => {
+  const { newBudget, id } = req.body;
 
-  if (!validateNumber(amount)) {
+  if (!validateUrlId(req.envelopeId, id)) {
+    res.status(400).send('URL ID does not match the envelope ID.');
+    return;
+  }
+
+  if (isNaN(newBudget)) {
     res.status(400).send('Please enter a number.');
   } else {
-    req.envelopeId.updateBudget(amount);
-    res.status(201).send(req.envelopeId);
+    try {
+      const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
+      if (!envelope) return;
+
+      const updatedEnvelopeBudget = await updatePersonalBudget(req.userId, req.envelopeId, newBudget);
+      const parsedUpdatedEnvelope = parseEnvelope(updatedEnvelopeBudget[0]);
+      res.status(201).json(parsedUpdatedEnvelope);
+    } catch (error) {
+      handleError(res, 500, error.message);
+    }
   }
 });
 
