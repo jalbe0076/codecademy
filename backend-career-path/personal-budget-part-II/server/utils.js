@@ -1,6 +1,6 @@
 // Consolidated error handling
 const handleError = (res, statusCode, error) => {
-    res.status(statusCode).json({ error: error.message || 'Internal Server Error' });
+    res.status(statusCode).json({ error: error.message || error.error || 'Internal Server Error' });
 };
 
 // parse database type numeric into a number in JS since the numeric type may contain values that are too large to "fit" in JavaScript's Number

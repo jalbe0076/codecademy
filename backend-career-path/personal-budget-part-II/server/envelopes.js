@@ -1,7 +1,6 @@
 const express = require('express');
 const apiEnvelopes = express.Router();
-const { findInstanceById, transferBudget } = require('./db');
-const { getAllEnvelopes, isValidUserId, postNewEnvelope, updatePersonalSpent, deleteEnvelope, updatePersonalBudget, fetchEnvelopeById } = require('../db/queries');
+const { queryDatabase, getAllEnvelopes, isValidUserId, postNewEnvelope, updatePersonalSpent, deleteEnvelope, replaceEnvelopeBudget, fetchEnvelopeById, adjustEnvelopeBudget } = require('../db/queries');
 const { handleError, parseEnvelope, validateUrlId } = require('./utils');
 
 // user auth is not properly implemented, this will allow anyone to check the database with different users
@@ -10,13 +9,13 @@ const validateUserId = (req, res, next) => {
   isValidUserId(userId)
     .then(userId => {
       if (!userId) {
-        res.status(400).json({ message: 'Invalid user ID' })
+        res.status(400).json({ error: 'Invalid user ID' })
       } else {
         req.userId = userId.id;
         next();
       }
     })
-    .catch(error => handleError(res, 500, error.message))
+    .catch(error => handleError(res, 500, error))
 }
 
 apiEnvelopes.use('/', validateUserId);
@@ -35,7 +34,7 @@ apiEnvelopes.get('/', (req, res) => {
         res.status(200).json(envelopes);
       }
     })
-    .catch((error) => handleError(res, 500, error.message));
+    .catch((error) => handleError(res, 500, error));
 });
 
 apiEnvelopes.post('/', (req, res) => {
@@ -48,15 +47,15 @@ apiEnvelopes.post('/', (req, res) => {
     postNewEnvelope(req.userId, title, parsedBudget, parsedSpent)
       .then(newEnvelope => {
         if (newEnvelope.exceedLimit) {
-          res.status(400).send('Exceeded budget limit');
+          res.status(400).send({ error: 'Exceeded budget limit'});
         } else {
           const parsedEnvelope = parseEnvelope(newEnvelope);
           res.status(201).json(parsedEnvelope);
         }
       })
-      .catch(error => handleError(res, 500, error.message));
+      .catch(error => handleError(res, 500, error));
   } else {
-    res.status(400).send('Invalid request');
+    res.status(400).send({ error: 'Invalid request'});
   }
 });
 
@@ -77,7 +76,7 @@ apiEnvelopes.get('/:envId', async (req, res) => {
     const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
     envelope && res.json(envelope);
   } catch (error) {
-    handleError(res, 500, error.message);
+    handleError(res, 500, error);
   }
 });
 
@@ -86,12 +85,12 @@ apiEnvelopes.put('/:envId', async (req, res) => {
   const parsedSpend = Number(spend);
 
   if (!validateUrlId(req.envelopeId, id)) {
-    res.status(400).send('URL ID does not match the envelope ID.');
+    res.status(400).send({ error: 'URL ID does not match the envelope ID.'});
     return;
   }
 
   if (isNaN(parsedSpend)) {
-    res.status(400).send('Please enter a number.');
+    res.status(400).send({ error: 'Please enter a number.' });
   } else {
     try {
       const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
@@ -101,13 +100,13 @@ apiEnvelopes.put('/:envId', async (req, res) => {
       const newSpent = spent + parsedSpend;
 
       if (newSpent > budget) {
-        res.status(400).send(`Insufficient balance.`);
+        res.status(400).send({ error: `Insufficient balance.` });
       } else {
         const updatedEnvelope = await updatePersonalSpent(req.userId, req.envelopeId, newSpent);
         res.status(201).json(parseEnvelope(updatedEnvelope));
       }
     } catch (error) {
-      handleError(res, 404, error.message);
+      handleError(res, 404, error);
     }
   }
 });
@@ -118,13 +117,13 @@ apiEnvelopes.delete('/:envId', (req, res) => {
   deleteEnvelope(req.userId, envId)
     .then(results => {
       if (!results.length) {
-        res.status(404).json({ message: `Envelope with ID ${envId} not found` });
+        res.status(404).json({ error: `Envelope with ID ${envId} not found` });
       } else {
         res.status(204).send();
       }
     })
     .catch((error) => {
-      handleError(res, 500, error.message);
+      handleError(res, 500, error);
     })
 });
 
@@ -133,42 +132,57 @@ apiEnvelopes.put('/:envId/budget', async (req, res) => {
   const { newBudget, id } = req.body;
 
   if (!validateUrlId(req.envelopeId, id)) {
-    res.status(400).send('URL ID does not match the envelope ID.');
+    res.status(400).send({ error: 'URL ID does not match the envelope ID.'});
     return;
   }
 
   if (isNaN(newBudget)) {
-    res.status(400).send('Please enter a number.');
+    res.status(400).send({ error: 'Please enter a number.' });
   } else {
     try {
-      const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res);
+      const envelope = await fetchEnvelopeById(req.userId, req.envelopeId, res); // confirm the envelope exists before updating it
       if (!envelope) return;
 
-      const updatedEnvelopeBudget = await updatePersonalBudget(req.userId, req.envelopeId, newBudget);
+      const updatedEnvelopeBudget = await replaceEnvelopeBudget(req.userId, req.envelopeId, newBudget);
       const parsedUpdatedEnvelope = parseEnvelope(updatedEnvelopeBudget[0]);
       res.status(201).json(parsedUpdatedEnvelope);
     } catch (error) {
-      handleError(res, 500, error.message);
+      const status = error.severity === 'ERROR' && 400;
+      handleError(res, status || 500, error);
     }
   }
 });
 
-apiEnvelopes.post('/transfer/:from/:to', (req, res) => {
-  const fromEnvelope = findInstanceById(req.params.from);
-  const toEnvelope = findInstanceById(req.params.to);
-  const amount = req.body.amount;
+// Transfer set amount from one budget to the other
+apiEnvelopes.post('/transfer/:from/:to', async (req, res) => {
+  const {fromEnvId, toEnvId, amount} = req.body;
+  const paramsFromId = parseInt(req.params.from);
+  const paramsToId = parseInt(req.params.to);
 
-  if (!fromEnvelope || !toEnvelope) {
-    res.status(404).send('Envelopes not found');
+  if(!validateUrlId(paramsFromId, fromEnvId) || !validateUrlId(paramsToId, toEnvId)) {
+    res.status(400).send({ error: 'URL ID does not match the envelope ID.' });
     return;
   }
 
-  const transfer = transferBudget(fromEnvelope, toEnvelope, amount);
+  try {
+    await queryDatabase('BEGIN');
 
-  if (transfer) {
-    res.status(201).send(transfer);
-  } else {
-    res.status(400).send('Insuficient transfer amount.');
+    const updatefromEnvelope = await adjustEnvelopeBudget(req.userId, paramsFromId, amount, '-');
+
+    const updateToEnvelope = await adjustEnvelopeBudget(req.userId, paramsToId, amount)
+    
+    if (!updateToEnvelope.length) {
+      throw { 
+        error: 'Destination envelope not found.',
+        status: 404
+      }
+    }
+
+    await queryDatabase('COMMIT');
+    res.status(201).send([ updatefromEnvelope[0], updateToEnvelope[0] ])
+  } catch (error) {
+    await queryDatabase('ROLLBACK');
+    handleError(res, error.status || 500, error);
   }
 });
 
