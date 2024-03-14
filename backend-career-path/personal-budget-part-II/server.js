@@ -21,3 +21,5 @@ app.use('/api', apiRouter);
 app.listen(PORT, () => {
   console.log(`${app.locals.title} is now running on http://localhost:${PORT}/`);
 });
+
+module.exports = app;

@@ -47,7 +47,7 @@ apiEnvelopes.post('/', (req, res) => {
     postNewEnvelope(req.userId, title, parsedBudget, parsedSpent)
       .then(newEnvelope => {
         if (newEnvelope.exceedLimit) {
-          res.status(400).send({ error: 'Exceeded budget limit'});
+          res.status(400).send({ error: 'Exceeded budget limit' });
         } else {
           const parsedEnvelope = parseEnvelope(newEnvelope);
           res.status(201).json(parsedEnvelope);
@@ -55,7 +55,7 @@ apiEnvelopes.post('/', (req, res) => {
       })
       .catch(error => handleError(res, 500, error));
   } else {
-    res.status(400).send({ error: 'Invalid request'});
+    res.status(400).send({ error: 'Invalid request' });
   }
 });
 
@@ -85,7 +85,7 @@ apiEnvelopes.put('/:envId', async (req, res) => {
   const parsedSpend = Number(spend);
 
   if (!validateUrlId(req.envelopeId, id)) {
-    res.status(400).send({ error: 'URL ID does not match the envelope ID.'});
+    res.status(400).send({ error: 'URL ID does not match the envelope ID.' });
     return;
   }
 
@@ -132,7 +132,7 @@ apiEnvelopes.put('/:envId/budget', async (req, res) => {
   const { newBudget, id } = req.body;
 
   if (!validateUrlId(req.envelopeId, id)) {
-    res.status(400).send({ error: 'URL ID does not match the envelope ID.'});
+    res.status(400).send({ error: 'URL ID does not match the envelope ID.' });
     return;
   }
 
@@ -155,11 +155,11 @@ apiEnvelopes.put('/:envId/budget', async (req, res) => {
 
 // Transfer set amount from one budget to the other
 apiEnvelopes.post('/transfer/:from/:to', async (req, res) => {
-  const {fromEnvId, toEnvId, amount} = req.body;
+  const { fromEnvId, toEnvId, amount } = req.body;
   const paramsFromId = parseInt(req.params.from);
   const paramsToId = parseInt(req.params.to);
 
-  if(!validateUrlId(paramsFromId, fromEnvId) || !validateUrlId(paramsToId, toEnvId)) {
+  if (!validateUrlId(paramsFromId, fromEnvId) || !validateUrlId(paramsToId, toEnvId)) {
     res.status(400).send({ error: 'URL ID does not match the envelope ID.' });
     return;
   }
@@ -170,16 +170,16 @@ apiEnvelopes.post('/transfer/:from/:to', async (req, res) => {
     const updatefromEnvelope = await adjustEnvelopeBudget(req.userId, paramsFromId, amount, '-');
 
     const updateToEnvelope = await adjustEnvelopeBudget(req.userId, paramsToId, amount)
-    
+
     if (!updateToEnvelope.length) {
-      throw { 
+      throw {
         error: 'Destination envelope not found.',
         status: 404
       }
     }
 
     await queryDatabase('COMMIT');
-    res.status(201).send([ updatefromEnvelope[0], updateToEnvelope[0] ])
+    res.status(201).send([updatefromEnvelope[0], updateToEnvelope[0]])
   } catch (error) {
     await queryDatabase('ROLLBACK');
     handleError(res, error.status || 500, error);
