@@ -4,7 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha tests/**/*.spec.mjs",
+    "test": "mocha ./tests/**/*.spec.mjs --exit",
     "start": "nodemon --watch server.js --watch server/"
   },
   "author": "",
