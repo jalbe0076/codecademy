@@ -7,9 +7,9 @@ describe(`Envelope tests`, () => {
   const expectedPersonalBudgetKeys = ['id', 'title', 'budget', 'spent', 'balance'];
   const expectedValuesUser1 = [
     { id: 1, title: 'Groceries', budget: 200, spent: 100, balance: 100 },
-    { id: 2, title: 'Entertainment', budget: 100, spent: 0,  balance: 100 }
+    { id: 2, title: 'Entertainment', budget: 100, spent: 0, balance: 100 }
   ];
-  const expectedValuesUser2 = [ { id: 3, title: 'Education', budget: 50, spent: 0, balance: 50 } ];
+  const expectedValuesUser2 = [{ id: 3, title: 'Education', budget: 50, spent: 0, balance: 50 }];
 
   before('Mock DB setup', async () => {
     await queryDatabase('CREATE TEMPORARY TABLE users (LIKE users INCLUDING ALL)');
@@ -21,28 +21,40 @@ describe(`Envelope tests`, () => {
     await queryDatabase('ALTER SEQUENCE personal_budget_id_seq RESTART WITH 1');
     await queryDatabase("INSERT INTO personal_budget (title, budget, spent, user_id) VALUES('Groceries', 200, 100, 1), ('Entertainment', 100, 0, 1), ('Education', 50, 0, 2)");
   });
-
-  it('User 1 should get a list of envelopes belonging to them', async () => {
-    const response = await request(app).get('/api/envelopes')
-    assert.equal(response.status, 200);
-    assert.match(response.headers['content-type'], /json/);
-
-    const responseBody = response.body;
-    assert.lengthOf(responseBody, 2)
-    assert.isNotEmpty(responseBody);
-    assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
-    assert.deepEqual(response.body, expectedValuesUser1);
-  });
-
-  it('User 2 should get a list of different envelopes', async () => {
-    const response = await request(app).get('/api/envelopes?user_id=2')
-    assert.equal(response.status, 200);
-    assert.match(response.headers['content-type'], /json/);
-
-    const responseBody = response.body;
-    assert.lengthOf(responseBody, 1)
-    assert.isNotEmpty(responseBody);
-    assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
-    assert.deepEqual(response.body, expectedValuesUser2);
-  });
+  
+  describe('GET /api/envelopes', () => {
+    it('User 1 should get a list of envelopes belonging to them', async () => {
+      const response = await request(app).get('/api/envelopes')
+      assert.equal(response.status, 200);
+      assert.match(response.headers['content-type'], /json/);
+  
+      const responseBody = response.body;
+      assert.lengthOf(responseBody, 2)
+      assert.isNotEmpty(responseBody);
+      assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
+      assert.deepEqual(response.body, expectedValuesUser1);
+    });
+  
+    it('User 2 should get a list of different envelopes', async () => {
+      const response = await request(app).get('/api/envelopes?user_id=2')
+      assert.equal(response.status, 200);
+      assert.match(response.headers['content-type'], /json/);
+  
+      const responseBody = response.body;
+      assert.lengthOf(responseBody, 1)
+      assert.isNotEmpty(responseBody);
+      assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
+      assert.deepEqual(response.body, expectedValuesUser2);
+    });
+  
+    it('If user ID does not exist, should receive an error object with a value of Invalid user ID', async () => {
+      const response = await request(app).get('/api/envelopes?user_id=3')
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+  
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(response.body, { error: 'Invalid user ID' });
+    });
+  })
 });
