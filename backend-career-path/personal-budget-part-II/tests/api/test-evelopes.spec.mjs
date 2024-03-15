@@ -9,6 +9,8 @@ describe(`Envelope tests`, () => {
     { id: 1, title: 'Groceries', budget: 200, spent: 100, balance: 100 },
     { id: 2, title: 'Entertainment', budget: 100, spent: 0,  balance: 100 }
   ];
+  const expectedValuesUser2 = [ { id: 3, title: 'Education', budget: 50, spent: 0, balance: 50 } ];
+
   before('Mock DB setup', async () => {
     await queryDatabase('CREATE TEMPORARY TABLE users (LIKE users INCLUDING ALL)');
     await queryDatabase('ALTER SEQUENCE users_id_seq RESTART WITH 1');
@@ -30,5 +32,17 @@ describe(`Envelope tests`, () => {
     assert.isNotEmpty(responseBody);
     assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
     assert.deepEqual(response.body, expectedValuesUser1);
+  });
+
+  it('User 2 should get a list of different envelopes', async () => {
+    const response = await request(app).get('/api/envelopes?user_id=2')
+    assert.equal(response.status, 200);
+    assert.match(response.headers['content-type'], /json/);
+
+    const responseBody = response.body;
+    assert.lengthOf(responseBody, 1)
+    assert.isNotEmpty(responseBody);
+    assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
+    assert.deepEqual(response.body, expectedValuesUser2);
   });
 });
