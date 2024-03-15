@@ -76,5 +76,22 @@ describe(`Envelope tests`, () => {
       assert.containsAllDeepKeys(responseBody, expectedPersonalBudgetKeys);
       assert.deepEqual(response.body, createdEnvelope);
     });
+
+    it('Users should be able to create a new envelope without indicating a spent amount', async () => {
+      const newEnvelope = { "title": "Education", "budget": 50 };
+      const createdEnvelope = { "id": 5, "title": "Education", "budget": 50, "spent": 0, "balance": 50 };
+
+      const response = await request(app)
+        .post('/api/envelopes')
+        .send(newEnvelope);
+
+      assert.equal(response.status, 201);
+      assert.match(response.headers['content-type'], /json/);
+  
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.containsAllDeepKeys(responseBody, expectedPersonalBudgetKeys);
+      assert.deepEqual(response.body, createdEnvelope);
+    });
   });
 });
