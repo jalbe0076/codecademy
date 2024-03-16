@@ -84,6 +84,16 @@ describe(`Envelope tests`, () => {
   });
 
   describe('GET /api/envelopes/:envId', () => {
+    it('Validates that a proper id is passed in', async () => {
+      const response = await request(app).get('/api/envelopes/e1')
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Invalid envelope ID' });
+    });
+
     it('User should get an envelope with a specific id', async () => {
       const response = await request(app).get('/api/envelopes/1')
       assert.equal(response.status, 200);
