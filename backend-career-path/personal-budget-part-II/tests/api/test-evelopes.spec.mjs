@@ -198,13 +198,27 @@ describe(`Envelope tests`, () => {
         .put('/api/envelopes/1')
         .send(updateEnvelope);
 
-    assert.equal(response.status, 201);
-    assert.match(response.headers['content-type'], /json/);
+      assert.equal(response.status, 201);
+      assert.match(response.headers['content-type'], /json/);
 
-    const responseBody = response.body;
-    assert.isNotEmpty(responseBody);
-    assert.deepEqual(responseBody, { id: 1, title: 'Groceries', budget: 200, spent: 120, balance: 80 });
-  });
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { id: 1, title: 'Groceries', budget: 200, spent: 120, balance: 80 });
+    });
+
+    it('Inform user if the sent body ID does not match the params ID', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 20 };
+      const response = await request(app)
+        .put('/api/envelopes/2')
+        .send(updateEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'URL ID does not match the envelope ID.' });
+    });
 });
 
 after('Clean up', async () => {
