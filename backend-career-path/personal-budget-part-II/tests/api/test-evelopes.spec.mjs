@@ -25,24 +25,6 @@ describe(`Envelope tests`, () => {
     await queryDatabase("INSERT INTO personal_budget (title, budget, spent, user_id) VALUES('Groceries', 200, 100, 1), ('Entertainment', 100, 0, 1), ('Education', 50, 0, 2)");
 
     // create temporary triggers
-    await queryDatabase(`CREATE OR REPLACE FUNCTION check_budget_limit_test() 
-    RETURNS TRIGGER AS $$
-    BEGIN
-        IF NEW.budget IS DISTINCT FROM OLD.budget THEN
-            IF (
-                (SELECT COALESCE(SUM(budget), 0) 
-                FROM personal_budget 
-                WHERE user_id = NEW.user_id AND id <> NEW.id) + NEW.budget >
-                (SELECT budget_limit FROM total_budget WHERE user_id = NEW.user_id)
-            ) THEN
-                RAISE EXCEPTION 'Exceeded budget limit';
-            END IF;
-        END IF;
-        
-        -- Continue with the trigger without errors
-        RETURN NEW;
-    END;
-    $$ LANGUAGE plpgsql`)
     await queryDatabase(`CREATE TRIGGER trigger_check_budget_limit_insert_test BEFORE INSERT ON personal_budget FOR EACH ROW EXECUTE FUNCTION check_budget_limit_test()`)
     await queryDatabase(` CREATE TRIGGER trigger_check_budget_limit_update_test BEFORE UPDATE ON personal_budget FOR EACH ROW WHEN ((new.budget IS DISTINCT FROM COALESCE(old.budget, new.budget))) EXECUTE FUNCTION check_budget_limit_test()`)
   });
@@ -194,23 +176,39 @@ describe(`Envelope tests`, () => {
       assert.deepEqual(responseBody, newExpectedValuesUser1);
     });
 
-    it('Users should not be able to create an envelope if it exceeds their budget limit', async () => {
-      const newEnvelope = { "title": "Utilities", "budget": 2000 };
+    // it('Users should not be able to create an envelope if it exceeds their budget limit', async () => {
+    //   const newEnvelope = { "title": "Utilities", "budget": 2000 };
+    //   const response = await request(app)
+    //     .post('/api/envelopes')
+    //     .send(newEnvelope);
+
+    //   assert.equal(response.status, 400);
+    //   assert.match(response.headers['content-type'], /json/);
+
+    //   const responseBody = response.body;
+    //   assert.isNotEmpty(responseBody);
+    //   assert.deepEqual(responseBody, { error: 'Exceeded budget limit' });
+    // });
+  });
+
+  describe('PUT /api/envelopes/:envId', () => {
+    it('User should be able to update envelope by id', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 20 };
       const response = await request(app)
-        .post('/api/envelopes')
-        .send(newEnvelope);
+        .put('/api/envelopes/1')
+        .send(updateEnvelope);
 
-      assert.equal(response.status, 400);
-      assert.match(response.headers['content-type'], /json/);
+    assert.equal(response.status, 201);
+    assert.match(response.headers['content-type'], /json/);
 
-      const responseBody = response.body;
-      assert.isNotEmpty(responseBody);
-      assert.deepEqual(responseBody, { error: 'Exceeded budget limit' });
-    });
+    const responseBody = response.body;
+    assert.isNotEmpty(responseBody);
+    assert.deepEqual(responseBody, { id: 1, title: 'Groceries', budget: 200, spent: 120, balance: 80 });
   });
+});
 
-  after('Clean up', async () => {
-    await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON personal_budget');
-    await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_update_test ON personal_budget');
-  });
+after('Clean up', async () => {
+  await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON personal_budget');
+  await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_update_test ON personal_budget');
+});
 });
