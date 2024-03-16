@@ -83,6 +83,19 @@ describe(`Envelope tests`, () => {
     });
   });
 
+  describe('GET /api/envelopes/:envId', () => {
+    it('User should get an envelope with a specific id', async () => {
+      const response = await request(app).get('/api/envelopes/1')
+      assert.equal(response.status, 200);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.containsAllDeepKeys(responseBody, expectedPersonalBudgetKeys);
+      assert.deepEqual(responseBody, expectedValuesUser1[0]);
+    });
+  });
+
   describe('POST /api/envelopes', () => {
     it('Users should be able to create a new envelope', async () => {
       const newEnvelope = { "title": "Gas", "budget": 50, "spent": 20 };
