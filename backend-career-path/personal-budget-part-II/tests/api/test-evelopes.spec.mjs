@@ -10,7 +10,6 @@ describe(`Envelope tests`, () => {
     { id: 2, title: 'Entertainment', budget: 100, spent: 0, balance: 100 }
   ];
   const expectedValuesUser2 = [{ id: 3, title: 'Education', budget: 50, spent: 0, balance: 50 }];
-  const noEnvelopes = [];
 
   before('Mock DB setup', async () => {
     await queryDatabase('CREATE TEMPORARY TABLE users (LIKE users INCLUDING ALL)');
@@ -21,6 +20,8 @@ describe(`Envelope tests`, () => {
     await queryDatabase('CREATE TEMPORARY TABLE personal_budget (LIKE personal_budget INCLUDING ALL)');
     await queryDatabase('ALTER SEQUENCE personal_budget_id_seq RESTART WITH 1');
     await queryDatabase("INSERT INTO personal_budget (title, budget, spent, user_id) VALUES('Groceries', 200, 100, 1), ('Entertainment', 100, 0, 1), ('Education', 50, 0, 2)");
+    await queryDatabase(`CREATE TRIGGER trigger_check_budget_limit_insert_test BEFORE INSERT ON personal_budget FOR EACH ROW EXECUTE FUNCTION check_budget_limit()`)
+    await queryDatabase(` CREATE TRIGGER trigger_check_budget_limit_update_test BEFORE UPDATE ON personal_budget FOR EACH ROW WHEN ((new.budget IS DISTINCT FROM COALESCE(old.budget, new.budget))) EXECUTE FUNCTION check_budget_limit()`)
   });
 
   describe('GET /api/envelopes', () => {
@@ -28,34 +29,34 @@ describe(`Envelope tests`, () => {
       const response = await request(app).get('/api/envelopes')
       assert.equal(response.status, 200);
       assert.match(response.headers['content-type'], /json/);
-  
+
       const responseBody = response.body;
       assert.lengthOf(responseBody, 2)
       assert.isNotEmpty(responseBody);
       assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
-      assert.deepEqual(response.body, expectedValuesUser1);
+      assert.deepEqual(responseBody, expectedValuesUser1);
     });
-  
+
     it('User 2 should get a list of different envelopes', async () => {
       const response = await request(app).get('/api/envelopes?user_id=2');
       assert.equal(response.status, 200);
       assert.match(response.headers['content-type'], /json/);
-  
+
       const responseBody = response.body;
       assert.lengthOf(responseBody, 1);
       assert.isNotEmpty(responseBody);
       assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
-      assert.deepEqual(response.body, expectedValuesUser2);
+      assert.deepEqual(responseBody, expectedValuesUser2);
     });
-  
+
     it('If user ID does not exist, should receive an error object with a value of Invalid user ID', async () => {
       const response = await request(app).get('/api/envelopes?user_id=3');
       assert.equal(response.status, 400);
       assert.match(response.headers['content-type'], /json/);
-  
+
       const responseBody = response.body;
       assert.isNotEmpty(responseBody);
-      assert.deepEqual(response.body, { error: 'Invalid user ID' });
+      assert.deepEqual(responseBody, { error: 'Invalid user ID' });
     });
   });
 
@@ -70,11 +71,11 @@ describe(`Envelope tests`, () => {
 
       assert.equal(response.status, 201);
       assert.match(response.headers['content-type'], /json/);
-  
+
       const responseBody = response.body;
       assert.isNotEmpty(responseBody);
       assert.containsAllDeepKeys(responseBody, expectedPersonalBudgetKeys);
-      assert.deepEqual(response.body, createdEnvelope);
+      assert.deepEqual(responseBody, createdEnvelope);
     });
 
     it('Users should be able to create a new envelope without indicating a spent amount', async () => {
@@ -87,11 +88,31 @@ describe(`Envelope tests`, () => {
 
       assert.equal(response.status, 201);
       assert.match(response.headers['content-type'], /json/);
-  
+
       const responseBody = response.body;
       assert.isNotEmpty(responseBody);
       assert.containsAllDeepKeys(responseBody, expectedPersonalBudgetKeys);
-      assert.deepEqual(response.body, createdEnvelope);
+      assert.deepEqual(responseBody, createdEnvelope);
     });
+
+    it('Users should not be able to create an envelope if it exceeds their budget limit', async () => {
+      const newEnvelope = { "title": "Utilities", "budget": 50 };
+      const response = await request(app)
+        .post('/api/envelopes')
+        .send(newEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Exceeded budget limit' });
+    });
+  });
+
+  after('Clean up', async () => {
+    await queryDatabase('TRUNCATE TABLE users, total_budget, personal_budget RESTART IDENTITY');
+    await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON public.personal_budget');
+    await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_update_test ON public.personal_budget');
   });
 });

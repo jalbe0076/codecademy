@@ -37,7 +37,7 @@ const postNewEnvelope = (userId, title, budget, spent = 0) => {
     RETURNING id, title, budget, spent`, [userId, title, budget, spent]
   ).then(newBudget => newBudget[0])
     .catch(error => {
-      if (error.message.includes('Exceeded budget limit!!!!!!!')) {
+      if (error.message.includes('Exceeded budget limit')) {
         return { exceedLimit: true };
       } else {
         throw new Error('Internal Server Error');
