@@ -275,6 +275,18 @@ describe(`Envelope tests`, () => {
       const responseBody = response.body;
       assert.isEmpty(responseBody);
     });
+
+    it('A message is sent if an envelope is not found', async () => {
+      const response = await request(app)
+        .delete('/api/envelopes/1')
+
+      assert.equal(response.status, 404);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: `Envelope with ID 1 not found` });
+    });
   });
 
   after('Clean up', async () => {
