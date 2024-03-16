@@ -247,7 +247,65 @@ describe(`Envelope tests`, () => {
       assert.isNotEmpty(responseBody);
       assert.deepEqual(responseBody, { error: 'Insufficient balance.' });
     });
-});
+  });
+
+  describe('PUT /api/envelopes/:envId/budget', () => {
+    it('User should be able to update envelope budget by id', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'newBudget': 220 };
+      const response = await request(app)
+        .put('/api/envelopes/1/budget')
+        .send(updateEnvelope);
+
+      assert.equal(response.status, 201);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { id: 1, title: 'Groceries', budget: 220, spent: 120, balance: 100 });
+    });
+
+    it.skip('Inform user if the sent body ID does not match the params ID', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 20 };
+      const response = await request(app)
+        .put('/api/envelopes/2')
+        .send(updateEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'URL ID does not match the envelope ID.' });
+    });
+
+    it.skip('Expects the spend amount to by type number', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 'twenty' };
+      const response = await request(app)
+        .put('/api/envelopes/1')
+        .send(updateEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Please enter a number.' });
+    });
+
+    it.skip('Informs if there is an unsufficient balance', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 81 };
+      const response = await request(app)
+        .put('/api/envelopes/1')
+        .send(updateEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Insufficient balance.' });
+    });
+  });
 
 after('Clean up', async () => {
   await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON personal_budget');
