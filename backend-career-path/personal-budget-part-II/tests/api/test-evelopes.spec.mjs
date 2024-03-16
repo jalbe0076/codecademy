@@ -219,6 +219,20 @@ describe(`Envelope tests`, () => {
       assert.isNotEmpty(responseBody);
       assert.deepEqual(responseBody, { error: 'URL ID does not match the envelope ID.' });
     });
+
+    it('Expects the spend amount to by type number', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 'twenty' };
+      const response = await request(app)
+        .put('/api/envelopes/1')
+        .send(updateEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Please enter a number.' });
+    });
 });
 
 after('Clean up', async () => {
