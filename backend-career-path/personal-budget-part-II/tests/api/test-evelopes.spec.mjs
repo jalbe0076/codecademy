@@ -263,52 +263,22 @@ describe(`Envelope tests`, () => {
       assert.isNotEmpty(responseBody);
       assert.deepEqual(responseBody, { id: 1, title: 'Groceries', budget: 220, spent: 120, balance: 100 });
     });
+  });
 
-    it.skip('Inform user if the sent body ID does not match the params ID', async () => {
-      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 20 };
+  describe('DELETE /api/envelopes/:envId', () => {
+    it('User should be able to delete an envelope by id', async () => {
       const response = await request(app)
-        .put('/api/envelopes/2')
-        .send(updateEnvelope);
+        .delete('/api/envelopes/1')
 
-      assert.equal(response.status, 400);
-      assert.match(response.headers['content-type'], /json/);
+      assert.equal(response.status, 204);
 
       const responseBody = response.body;
-      assert.isNotEmpty(responseBody);
-      assert.deepEqual(responseBody, { error: 'URL ID does not match the envelope ID.' });
-    });
-
-    it.skip('Expects the spend amount to by type number', async () => {
-      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 'twenty' };
-      const response = await request(app)
-        .put('/api/envelopes/1')
-        .send(updateEnvelope);
-
-      assert.equal(response.status, 400);
-      assert.match(response.headers['content-type'], /json/);
-
-      const responseBody = response.body;
-      assert.isNotEmpty(responseBody);
-      assert.deepEqual(responseBody, { error: 'Please enter a number.' });
-    });
-
-    it.skip('Informs if there is an unsufficient balance', async () => {
-      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'spend': 81 };
-      const response = await request(app)
-        .put('/api/envelopes/1')
-        .send(updateEnvelope);
-
-      assert.equal(response.status, 400);
-      assert.match(response.headers['content-type'], /json/);
-
-      const responseBody = response.body;
-      assert.isNotEmpty(responseBody);
-      assert.deepEqual(responseBody, { error: 'Insufficient balance.' });
+      assert.isEmpty(responseBody);
     });
   });
 
-after('Clean up', async () => {
-  await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON personal_budget');
-  await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_update_test ON personal_budget');
-});
+  after('Clean up', async () => {
+    await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON personal_budget');
+    await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_update_test ON personal_budget');
+  });
 });
