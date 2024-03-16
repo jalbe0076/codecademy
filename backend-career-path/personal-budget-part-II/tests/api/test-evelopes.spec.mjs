@@ -289,6 +289,28 @@ describe(`Envelope tests`, () => {
     });
   });
 
+  describe('POST /api/envelopes/transfer/:from/:to', () => {
+    it('A user should be able to transfer from one envelope to another', async () => {
+      const transferBody = { "fromEnvId": 2, "toEnvId": 4, "amount": 25 }
+      const updatedEnvelopes = [
+        { id: 2, title: 'Entertainment', budget: 75, spent: 0, balance: 75 },
+        { id: 4, title: 'Gas', budget: 75, spent: 20, balance: 55 }
+      ];
+
+      const response = await request(app)
+        .post('/api/envelopes/transfer/2/4')
+        .send(transferBody);
+
+      assert.equal(response.status, 201);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
+      assert.deepEqual(responseBody, updatedEnvelopes);
+    });
+  });
+
   after('Clean up', async () => {
     await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON personal_budget');
     await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_update_test ON personal_budget');

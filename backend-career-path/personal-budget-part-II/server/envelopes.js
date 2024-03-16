@@ -179,7 +179,9 @@ apiEnvelopes.post('/transfer/:from/:to', async (req, res) => {
     }
 
     await queryDatabase('COMMIT');
-    res.status(201).send([updatefromEnvelope[0], updateToEnvelope[0]])
+    const parsedFromEnvelope = parseEnvelope(updatefromEnvelope[0]);
+    const parsedToEnvelope = parseEnvelope(updateToEnvelope[0]);
+    res.status(201).send([parsedFromEnvelope, parsedToEnvelope])
   } catch (error) {
     await queryDatabase('ROLLBACK');
     handleError(res, error.status || 500, error);
