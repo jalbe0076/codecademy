@@ -94,6 +94,16 @@ describe(`Envelope tests`, () => {
       assert.containsAllDeepKeys(responseBody, expectedPersonalBudgetKeys);
       assert.deepEqual(responseBody, expectedValuesUser1[0]);
     });
+
+    it('User should be informed if there is no envelope with that id', async () => {
+      const response = await request(app).get('/api/envelopes/21')
+      assert.equal(response.status, 404);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Envelope with ID 21 not found' });
+    });
   });
 
   describe('POST /api/envelopes', () => {
