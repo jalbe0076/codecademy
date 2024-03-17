@@ -15,14 +15,14 @@ describe(`Envelope tests`, () => {
     // create temporary tables and data
     await queryDatabase('CREATE TEMPORARY TABLE users (LIKE users INCLUDING ALL)');
     await queryDatabase('ALTER SEQUENCE users_id_seq RESTART WITH 1');
-    await queryDatabase("INSERT INTO users (first_name, last_name) VALUES('Mark', 'Lane'), ('Jane', 'Doe')");
+    await queryDatabase(`INSERT INTO users (first_name, last_name) VALUES('Mark', 'Lane'), ('Jane', 'Doe')`);
 
     await queryDatabase('CREATE TEMPORARY TABLE total_budget (LIKE total_budget INCLUDING ALL)');
-    await queryDatabase("INSERT INTO total_budget (user_id, budget_limit) VALUES(1, 550), (2, 100)");
+    await queryDatabase('INSERT INTO total_budget (user_id, budget_limit) VALUES(1, 550), (2, 100)');
 
     await queryDatabase('CREATE TEMPORARY TABLE personal_budget (LIKE personal_budget INCLUDING ALL)');
     await queryDatabase('ALTER SEQUENCE personal_budget_id_seq RESTART WITH 1');
-    await queryDatabase("INSERT INTO personal_budget (title, budget, spent, user_id) VALUES('Groceries', 200, 100, 1), ('Entertainment', 100, 0, 1), ('Education', 50, 0, 2)");
+    await queryDatabase(`INSERT INTO personal_budget (title, budget, spent, user_id) VALUES('Groceries', 200, 100, 1), ('Entertainment', 100, 0, 1), ('Education', 50, 0, 2)`);
 
     // create temporary triggers
     await queryDatabase(`CREATE TRIGGER trigger_check_budget_limit_insert_test BEFORE INSERT ON personal_budget FOR EACH ROW EXECUTE FUNCTION check_budget_limit_test()`)
@@ -110,8 +110,8 @@ describe(`Envelope tests`, () => {
 
   describe('POST /api/envelopes', () => {
     it('Users should be able to create a new envelope', async () => {
-      const newEnvelope = { "title": "Gas", "budget": 50, "spent": 20 };
-      const createdEnvelope = { "id": 4, "title": "Gas", "budget": 50, "spent": 20, "balance": 30 };
+      const newEnvelope = { 'title': 'Gas', 'budget': 50, 'spent': 20 };
+      const createdEnvelope = { 'id': 4, 'title': 'Gas', 'budget': 50, 'spent': 20, 'balance': 30 };
 
       const response = await request(app)
         .post('/api/envelopes')
@@ -127,8 +127,8 @@ describe(`Envelope tests`, () => {
     });
 
     it('Users should be able to create a new envelope without indicating a spent amount', async () => {
-      const newEnvelope = { "title": "Education", "budget": 50 };
-      const createdEnvelope = { "id": 5, "title": "Education", "budget": 50, "spent": 0, "balance": 50 };
+      const newEnvelope = { 'title': 'Education', 'budget': 50 };
+      const createdEnvelope = { 'id': 5, 'title': 'Education', 'budget': 50, 'spent': 0, 'balance': 50 };
 
       const response = await request(app)
         .post('/api/envelopes')
@@ -144,7 +144,7 @@ describe(`Envelope tests`, () => {
     });
 
     it('Users should be able to create a new envelope without proper data', async () => {
-      const newEnvelope = { "name": "Education", "budget": 50 };
+      const newEnvelope = { 'name': 'Education', 'budget': 50 };
 
       const response = await request(app)
         .post('/api/envelopes')
@@ -175,20 +175,6 @@ describe(`Envelope tests`, () => {
       assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
       assert.deepEqual(responseBody, newExpectedValuesUser1);
     });
-
-    // it('Users should not be able to create an envelope if it exceeds their budget limit', async () => {
-    //   const newEnvelope = { "title": "Utilities", "budget": 2000 };
-    //   const response = await request(app)
-    //     .post('/api/envelopes')
-    //     .send(newEnvelope);
-
-    //   assert.equal(response.status, 400);
-    //   assert.match(response.headers['content-type'], /json/);
-
-    //   const responseBody = response.body;
-    //   assert.isNotEmpty(responseBody);
-    //   assert.deepEqual(responseBody, { error: 'Exceeded budget limit' });
-    // });
   });
 
   describe('PUT /api/envelopes/:envId', () => {
@@ -343,7 +329,7 @@ describe(`Envelope tests`, () => {
 
   describe('Database error handling ', () => {
     it('Users should not be able to create an envelope if it exceeds their budget limit', async () => {
-      const newEnvelope = { "title": "Utilities", "budget": 2000 };
+      const newEnvelope = { 'title': 'Utilities', 'budget': 2000 };
       const response = await request(app)
         .post('/api/envelopes')
         .send(newEnvelope);
