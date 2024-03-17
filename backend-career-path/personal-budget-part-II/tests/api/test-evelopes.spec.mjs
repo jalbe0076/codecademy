@@ -291,7 +291,7 @@ describe(`Envelope tests`, () => {
 
   describe('POST /api/envelopes/transfer/:from/:to', () => {
     it('A user should be able to transfer from one envelope to another', async () => {
-      const transferBody = { "fromEnvId": 2, "toEnvId": 4, "amount": 25 }
+      const transferBody = { 'fromEnvId': 2, 'toEnvId': 4, 'amount': 25 }
       const updatedEnvelopes = [
         { id: 2, title: 'Entertainment', budget: 75, spent: 0, balance: 75 },
         { id: 4, title: 'Gas', budget: 75, spent: 20, balance: 55 }
@@ -308,6 +308,21 @@ describe(`Envelope tests`, () => {
       assert.isNotEmpty(responseBody);
       assert.containsAllDeepKeys(responseBody[0], expectedPersonalBudgetKeys);
       assert.deepEqual(responseBody, updatedEnvelopes);
+    });
+
+    it('URL ID must match the envelope ID and send an error message if it does not', async () => {
+      const transferBody = { 'fromEnvId': 5, 'toEnvId': 4, 'amount': 25 }
+
+      const response = await request(app)
+        .post('/api/envelopes/transfer/2/4')
+        .send(transferBody);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'URL ID does not match the envelope ID.' });
     });
   });
 
