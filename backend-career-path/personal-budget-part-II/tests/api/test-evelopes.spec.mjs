@@ -355,6 +355,22 @@ describe(`Envelope tests`, () => {
       assert.isNotEmpty(responseBody);
       assert.deepEqual(responseBody, { error: 'Exceeded budget limit' });
     });
+
+
+
+    it('Users should not be able to update an envelope budget if it exceeds their budget limit', async () => {
+      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'newBudget': 2220 };
+      const response = await request(app)
+        .put('/api/envelopes/1/budget')
+        .send(updateEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Exceeded budget limit' });
+    });
   });
 
   after('Clean up', async () => {
