@@ -324,6 +324,21 @@ describe(`Envelope tests`, () => {
       assert.isNotEmpty(responseBody);
       assert.deepEqual(responseBody, { error: 'URL ID does not match the envelope ID.' });
     });
+
+    it('Should check that a destination envelope exists and send message if it does not', async () => {
+      const transferBody = { 'fromEnvId': 2, 'toEnvId': 44, 'amount': 25 }
+
+      const response = await request(app)
+        .post('/api/envelopes/transfer/2/44')
+        .send(transferBody);
+
+      assert.equal(response.status, 404);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Destination envelope not found.' });
+    });
   });
 
   after('Clean up', async () => {
