@@ -341,6 +341,22 @@ describe(`Envelope tests`, () => {
     });
   });
 
+  describe('Database error handling ', () => {
+    it('Users should not be able to create an envelope if it exceeds their budget limit', async () => {
+      const newEnvelope = { "title": "Utilities", "budget": 2000 };
+      const response = await request(app)
+        .post('/api/envelopes')
+        .send(newEnvelope);
+
+      assert.equal(response.status, 400);
+      assert.match(response.headers['content-type'], /json/);
+
+      const responseBody = response.body;
+      assert.isNotEmpty(responseBody);
+      assert.deepEqual(responseBody, { error: 'Exceeded budget limit' });
+    });
+  });
+
   after('Clean up', async () => {
     await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_insert_test ON personal_budget');
     await queryDatabase('DROP TRIGGER IF EXISTS trigger_check_budget_limit_update_test ON personal_budget');
