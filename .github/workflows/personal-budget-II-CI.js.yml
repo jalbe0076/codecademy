@@ -32,7 +32,12 @@ jobs:
         cache: 'npm'
     - name: Change directory to the subfolder
       run: cd backend-career-path/personal-budget-part-II
+    - name: Install dependencies
+      run: npm ci
       working-directory: backend-career-path/personal-budget-part-II
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - name: Build project
+      run: npm run build --if-present
+      working-directory: backend-career-path/personal-budget-part-II
+    - name: Run tests
+      run: npm test
+      working-directory: backend-career-path/personal-budget-part-II
