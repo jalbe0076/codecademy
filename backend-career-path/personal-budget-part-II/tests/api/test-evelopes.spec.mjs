@@ -345,9 +345,9 @@ describe(`Envelope tests`, () => {
 
 
     it('Users should not be able to update an envelope budget if it exceeds their budget limit', async () => {
-      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'newBudget': 2220 };
+      const updateEnvelope = { 'id': 2, 'title': 'Entertainment', 'newBudget': 2220 };
       const response = await request(app)
-        .put('/api/envelopes/1/budget')
+        .put('/api/envelopes/2/budget')
         .send(updateEnvelope);
 
       assert.equal(response.status, 400);
