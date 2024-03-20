@@ -25,8 +25,8 @@ describe(`Envelope tests`, () => {
     await queryDatabase(`INSERT INTO personal_budget (title, budget, spent, user_id) VALUES('Groceries', 200, 100, 1), ('Entertainment', 100, 0, 1), ('Education', 50, 0, 2)`);
 
     // create temporary triggers
-    await queryDatabase(`CREATE TRIGGER trigger_check_budget_limit_insert_test BEFORE INSERT ON personal_budget FOR EACH ROW EXECUTE FUNCTION check_budget_limit_test()`)
-    await queryDatabase(` CREATE TRIGGER trigger_check_budget_limit_update_test BEFORE UPDATE ON personal_budget FOR EACH ROW WHEN ((new.budget IS DISTINCT FROM COALESCE(old.budget, new.budget))) EXECUTE FUNCTION check_budget_limit_test()`)
+    await queryDatabase(`CREATE TRIGGER trigger_check_budget_limit_insert_test BEFORE INSERT ON personal_budget FOR EACH ROW EXECUTE FUNCTION check_budget_limit()`)
+    await queryDatabase(` CREATE TRIGGER trigger_check_budget_limit_update_test BEFORE UPDATE ON personal_budget FOR EACH ROW WHEN ((new.budget IS DISTINCT FROM COALESCE(old.budget, new.budget))) EXECUTE FUNCTION check_budget_limit()`)
   });
 
   describe('GET /api/envelopes', () => {
@@ -345,9 +345,9 @@ describe(`Envelope tests`, () => {
 
 
     it('Users should not be able to update an envelope budget if it exceeds their budget limit', async () => {
-      const updateEnvelope = { 'id': 1, 'title': 'Groceries', 'newBudget': 2220 };
+      const updateEnvelope = { 'id': 2, 'title': 'Entertainment', 'newBudget': 2220 };
       const response = await request(app)
-        .put('/api/envelopes/1/budget')
+        .put('/api/envelopes/2/budget')
         .send(updateEnvelope);
 
       assert.equal(response.status, 400);
