@@ -25,8 +25,8 @@ describe(`Envelope tests`, () => {
     await queryDatabase(`INSERT INTO personal_budget (title, budget, spent, user_id) VALUES('Groceries', 200, 100, 1), ('Entertainment', 100, 0, 1), ('Education', 50, 0, 2)`);
 
     // create temporary triggers
-    await queryDatabase(`CREATE TRIGGER trigger_check_budget_limit_insert_test BEFORE INSERT ON personal_budget FOR EACH ROW EXECUTE FUNCTION check_budget_limit_test()`)
-    await queryDatabase(` CREATE TRIGGER trigger_check_budget_limit_update_test BEFORE UPDATE ON personal_budget FOR EACH ROW WHEN ((new.budget IS DISTINCT FROM COALESCE(old.budget, new.budget))) EXECUTE FUNCTION check_budget_limit_test()`)
+    await queryDatabase(`CREATE TRIGGER trigger_check_budget_limit_insert_test BEFORE INSERT ON personal_budget FOR EACH ROW EXECUTE FUNCTION check_budget_limit()`)
+    await queryDatabase(` CREATE TRIGGER trigger_check_budget_limit_update_test BEFORE UPDATE ON personal_budget FOR EACH ROW WHEN ((new.budget IS DISTINCT FROM COALESCE(old.budget, new.budget))) EXECUTE FUNCTION check_budget_limit()`)
   });
 
   describe('GET /api/envelopes', () => {
