@@ -37,6 +37,14 @@ In the transition from Personal Budget - Part 1 to Part 2, the project underwent
 - Run `npm install` to install the dependencies of this project 
 - Run `npm start` to begin your server. You'll see `Server listening on port 3000` in the terminal.
 - Test the endpoints in Postman
+- With the **server off** run `npm test` to run the tests
+
+## Deployed site and server
+
+The server and database has been deployed on Render with it's free service. The Database will be disconected after 60 days. Should the database be disconnected and you wish to access it. Please send me an email so that I can reconnect it. 
+
+You can visit the [site here](https://personal-budget-ii-59v8.onrender.com)
+  - add the endpoints or queries in the url to get data. For example `https://personal-budget-ii-59v8.onrender.com/api/envelopes/` will get all envelopes for user 1. 
 
 ## API Routes
 

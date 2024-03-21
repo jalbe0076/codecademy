@@ -3,7 +3,10 @@ let pool;
 
 if (process.env.DATABASE_URL) {
   pool = new Pool({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false // Ignore self-signed certificates on Render
+    }
   }); 
 } else {
   pool = new Pool({
