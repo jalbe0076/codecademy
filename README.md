@@ -11,6 +11,7 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Orders (API with Swagger)
   - [x] Personal Budget
   - [ ] Personal Budget - part II
+  - [x] GitHub OAuth 2.0 Application
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path
