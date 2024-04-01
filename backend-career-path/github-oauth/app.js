@@ -93,7 +93,7 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/auth/github', passport.authenticate('github', {
-  scope: ['user']
+  scope: ['read:user']
 }));
 
 app.get('/auth/github/callback', passport.authenticate('github', {
