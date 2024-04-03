@@ -3,11 +3,14 @@ const express = require("express");
 const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
+const helmet = require('helmet');
+
 
 const db = new sqlite3.Database("./bank_sample.db");
 
 const app = express();
 const PORT = 3000;
+app.use(helmet());
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -16,6 +19,11 @@ app.use(
     secret: "secret",
     resave: true,
     saveUninitialized: true,
+    cookies: {
+      httpOnly: true, 
+      secure: true, 
+      maxAge: 3600000
+    }
   })
 );
 
