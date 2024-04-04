@@ -177,7 +177,8 @@ app.post("/public_forum", function (request, response) {
     var username = request.session.username;
     if (comment) {
       db.all(
-        `INSERT INTO public_forum (username,message) VALUES ('${username}','${comment}')`,
+        `INSERT INTO public_forum (username,message) VALUES ($username, $comment)`,
+        { $username: username, $comment: comment },
         (err, rows) => {
           console.log(err);
         }
