@@ -20,8 +20,8 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookies: {
-      httpOnly: true, 
-      secure: true, 
+      httpOnly: true,
+      secure: true,
       maxAge: 3600000
     }
   })
@@ -142,11 +142,18 @@ app.post("/download", function (request, response) {
     response.setHeader("Content-Type", "text/html");
 
     // Change the filePath to current working directory using the "path" method
-    const filePath = "history_files/" + file_name;
-    console.log(filePath);
+    const rootDirectory = 'history_files' + path.sep;
+    const root_directory = process.cwd() + '/history_files/';
+    const filePath = path.join(root_directory, file_name);
+    const fileName = path.normalize(filePath);
+    console.log('filename: ', fileName, rootDirectory, fileName.indexOf(rootDirectory));
     try {
-      content = fs.readFileSync(filePath, "utf8");
-      response.end(content);
+      if (fileName.indexOf(rootDirectory) < 0) {
+        response.end('File not found!');
+      } else {
+        content = fs.readFileSync(fileName, "utf8");
+        response.end(content);
+      }
     } catch (err) {
       console.log(err);
       response.end("File not found");
@@ -171,39 +178,39 @@ app.get("/public_forum", function (request, response) {
   //response.end();
 });
 
-app.post("/public_forum", 
+app.post("/public_forum",
   body('comment').escape().trim(),
   function (request, response) {
-  if (request.session.loggedin) {
-    var comment = request.body.comment;
-    var username = request.session.username;
-    if (comment) {
-      db.all(
-        `INSERT INTO public_forum (username,message) VALUES ($username, $comment)`,
-        { $username: username, $comment: comment },
-        (err, rows) => {
+    if (request.session.loggedin) {
+      var comment = request.body.comment;
+      var username = request.session.username;
+      if (comment) {
+        db.all(
+          `INSERT INTO public_forum (username,message) VALUES ($username, $comment)`,
+          { $username: username, $comment: comment },
+          (err, rows) => {
+            console.log(err);
+          }
+        );
+        db.all(`SELECT username,message FROM public_forum`, (err, rows) => {
+          console.log(rows);
           console.log(err);
-        }
-      );
-      db.all(`SELECT username,message FROM public_forum`, (err, rows) => {
-        console.log(rows);
-        console.log(err);
-        response.render("forum", { rows });
-      });
+          response.render("forum", { rows });
+        });
+      } else {
+        db.all(`SELECT username,message FROM public_forum`, (err, rows) => {
+          console.log(rows);
+          console.log(err);
+          response.render("forum", { rows });
+        });
+      }
+      comment = "";
     } else {
-      db.all(`SELECT username,message FROM public_forum`, (err, rows) => {
-        console.log(rows);
-        console.log(err);
-        response.render("forum", { rows });
-      });
+      response.redirect("/");
     }
     comment = "";
-  } else {
-    response.redirect("/");
-  }
-  comment = "";
-  //response.end();
-});
+    //response.end();
+  });
 
 //SQL UNION INJECTION
 app.get("/public_ledger", function (request, response) {
@@ -212,7 +219,7 @@ app.get("/public_ledger", function (request, response) {
     if (id) {
       db.all(
         `SELECT * FROM public_ledger WHERE from_account = $id`,
-        {$id: id},
+        { $id: id },
         (err, rows) => {
           console.log("PROCESSING INPU");
           console.log(err);
