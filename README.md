@@ -12,6 +12,7 @@ These are a collection of projects following Codecademy's different career or sk
   - [x] Personal Budget
   - [ ] Personal Budget - part II
   - [x] GitHub OAuth 2.0 Application
+  - [x] ACME Bank
 - [ ] Learn Redux skill path
 - [ ] Computer Science career path
 - [ ] Business Intelligence Data Analyst career path

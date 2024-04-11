@@ -14,7 +14,7 @@ Guided by Codecademy's project directives, the primary objective of this project
 
 ## Project Overview
 
-Utilizing `Node` and `Express`, I refactored the code to protect against `Cross-Site Scripting (XXS)` attacks by using helmet, securing cookies, validating and normalizing data with `express-validator` and implementing alternative methods to prevent DOM-Based XSS attacks. I also helped prevent SQL injection attacks by using prepared statements as well as validating inputs.
+Utilizing `Node` and `Express`, I refactored the code to protect against `Cross-Site Scripting (XXS)` attacks by using `helmet`, securing cookies, validating and normalizing data with `express-validator` and implementing alternative methods to prevent DOM-Based XSS attacks. I also helped prevent SQL injection attacks by using prepared statements as well as validating inputs.
 
 ## How to Begin
 
@@ -23,4 +23,4 @@ Utilizing `Node` and `Express`, I refactored the code to protect against `Cross-
 - Run `npm install` to install the dependencies of this project 
 - Run `node app.js` to begin your server. You'll see `Server listening on port 3000` in the terminal.
 - In a browser, visit `http://localhost:3000`
-- Open the database `bank_sample.db` in `DB Browser` to see users and passwords so that you can login.
+- Open the database `bank_sample.db` in `DB Browser` to see users and passwords so that you can login. For example user `admin` has `C0deC@demy_Rocks!` as a password.
